@@ -25,6 +25,7 @@ INSTALLED_APPS = [
 
     # My Apps
     "currency.apps.CurrencyConfig",
+    "operations.apps.OperationsConfig",
 ]
 
 MIDDLEWARE = [
