@@ -1,3 +1,58 @@
 from django.db import models
 
-# Create your models here.
+
+class Currency(models.Model):
+    symbol = models.CharField(
+        max_length=3,
+        help_text="ISO 4217 Currency Code",
+    )
+    name = models.CharField(max_length=64)
+    description = models.CharField(max_length=128)
+
+    def __str__(self) -> str:
+        return self.symbol
+
+
+class CurrencyPair(models.Model):
+    symbol = models.CharField(max_length=64, blank=True, null=True)
+    description = models.CharField(max_length=128)
+    base_currency = models.ForeignKey(
+        Currency,
+        on_delete=models.PROTECT,
+        related_name="base_currency",
+        help_text="Currency that is being bought or sold",
+    )
+    quote_currency = models.ForeignKey(
+        Currency,
+        on_delete=models.PROTECT,
+        related_name="quote_currency",
+        help_text="Currency that is used to price the base currency",
+    )
+    usd_per_lot = models.FloatField(
+        default=10,
+        help_text="Quantity of USD per standard lot",
+    )
+    digits = models.IntegerField(
+        help_text="The amount of digits after decimal point in the price representation",
+    )
+    multiplier = models.IntegerField(
+        default=10000,
+        help_text="Value used to calculate the total profit/loss in pips",
+    )
+    swap_long = models.FloatField(
+        help_text="In-points overnight interest for a long position",
+    )
+    swap_short = models.FloatField(
+        help_text="In-points overnight interest for a short position",
+    )
+    avg_daily_range = models.IntegerField(
+        help_text="In-points average daily range between highest and lowest price",
+    )
+
+    def save(self):
+        self.symbol = f"{self.base_currency}/{self.quote_currency}"
+        return super().save()
+
+    def __str__(self) -> str:
+        return self.symbol
+
