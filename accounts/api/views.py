@@ -13,8 +13,12 @@ from rest_framework.permissions import (
 from rest_framework.response import Response
 from rest_framework import status
 
-from accounts.models import User
-from accounts.api.serializers import UserSerializer
+from accounts.models import User, TradingAccount, Transaction
+from accounts.api.serializers import (
+    UserSerializer,
+    TradingAccountSerializer,
+    TransactionSerializer,
+)
 
 
 class UserViewMixin:
@@ -120,3 +124,27 @@ class CurrentUserView(UserDetailView):
 
     def get_object(self):
         return self.request.user
+
+
+class TradingAccountListView(ListCreateAPIView):
+    model = TradingAccount
+    queryset = model.objects.all()
+    serializer_class = TradingAccountSerializer
+
+
+class TradingAccountDetailView(RetrieveUpdateDestroyAPIView):
+    model = TradingAccount
+    queryset = model.objects.all()
+    serializer_class = TradingAccountSerializer
+
+
+class TransactionListView(ListCreateAPIView):
+    model = Transaction
+    queryset = model.objects.all()
+    serializer_class = TransactionSerializer
+
+
+class TransactionDetailView(RetrieveUpdateDestroyAPIView):
+    model = Transaction
+    queryset = model.objects.all()
+    serializer_class = TransactionSerializer
