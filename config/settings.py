@@ -23,7 +23,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    # Third-party Apps
+    "rest_framework",
+
     # My Apps
+    "accounts.apps.AccountsConfig",
     "currency.apps.CurrencyConfig",
     "operations.apps.OperationsConfig",
 ]
@@ -80,7 +84,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
@@ -92,3 +95,5 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTH_USER_MODEL = 'accounts.User'
