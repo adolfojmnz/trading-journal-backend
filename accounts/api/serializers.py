@@ -2,7 +2,7 @@ from django.contrib.auth.hashers import make_password
 
 from rest_framework import serializers
 
-from accounts.models import User
+from accounts.models import User, TradingAccount, Transaction
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -37,3 +37,17 @@ class UserSerializer(serializers.ModelSerializer):
             pass
         finally:
             return super().save(**kwargs)
+
+
+class TradingAccountSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TradingAccount
+        fields = '__all__'
+
+
+class TransactionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Transaction
+        fields = '__all__'
