@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+ACCOUNT_TYPE = [
+    ("DM", "demo"),
+    ("RL", "real"),
+]
+
 TRANSACTIONS = [
     ("DP", "deposit"),
     ("WT", "withdrawal"),
@@ -26,6 +31,12 @@ class TradingAccount(models.Model):
     broker = models.CharField(
         max_length=128,
         help_text="Broker in which the account is registered",
+    )
+    type = models.CharField(
+        default="DM",
+        choices=ACCOUNT_TYPE,
+        max_length=2,
+        help_text="Trading accounts can be either DEMO or REAL",
     )
     equity = models.FloatField(
         default=0.0,
@@ -64,6 +75,7 @@ class Transaction(models.Model):
     amount = models.FloatField()
     date = models.DateField(auto_now_add=True)
     time = models.TimeField(auto_now_add=True)
+    concept = models.CharField(max_length=64, blank=True, null=True)
 
     def __str__(self) -> str:
         return f"{self.type} for {self.amount} USD on {self.date} at {self.time}"
