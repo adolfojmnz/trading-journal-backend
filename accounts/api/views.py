@@ -130,12 +130,24 @@ class TradingAccountListView(ListCreateAPIView):
     model = TradingAccount
     queryset = model.objects.all()
     serializer_class = TradingAccountSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            user=self.request.user
+        )
 
 
 class TradingAccountDetailView(RetrieveUpdateDestroyAPIView):
     model = TradingAccount
     queryset = model.objects.all()
     serializer_class = TradingAccountSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            user=self.request.user
+        )
 
 
 class TransactionListView(ListCreateAPIView):
