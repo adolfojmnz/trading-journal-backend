@@ -44,6 +44,12 @@ class TradingAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = TradingAccount
         fields = '__all__'
+        extra_kwargs = {
+            "total_deposited": {"read_only": True},
+            "total_withdrawn": {"read_only": True},
+            "total_lost": {"read_only": True},
+            "total_profited": {"read_only": True},
+        }
 
 
 class TransactionSerializer(serializers.ModelSerializer):
