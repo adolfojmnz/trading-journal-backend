@@ -15,21 +15,16 @@ POSITIONS = [
 ]
 
 class Operation(models.Model):
-    currency_pair = models.ForeignKey(
-        CurrencyPair,
-        on_delete=models.PROTECT,
-    )
+    currency_pair = models.ForeignKey(CurrencyPair, on_delete=models.PROTECT)
     status = models.CharField(choices=OPERATION_STATUS, max_length=2)
     open_datetime = models.DateTimeField()
     close_datetime = models.DateTimeField(default=None, blank=True, null=True)
     open_price = models.FloatField()
     close_price = models.FloatField(default=None, blank=True, null=True)
     volume = models.FloatField(default=0.01)
-    leverage = models.IntegerField(default=100)
     position = models.CharField(
         choices=POSITIONS,
         max_length=2,
-        help_text="Operation type, e.g long for buy",
     )
     pips = models.FloatField(
         default=0.0,
