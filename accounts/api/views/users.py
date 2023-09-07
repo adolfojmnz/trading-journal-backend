@@ -1,6 +1,8 @@
-from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
 
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
@@ -10,15 +12,9 @@ from rest_framework.permissions import (
     IsAdminUser,
     SAFE_METHODS,
 )
-from rest_framework.response import Response
-from rest_framework import status
 
-from accounts.models import User, TradingAccount, Transaction
-from accounts.api.serializers import (
-    UserSerializer,
-    TradingAccountSerializer,
-    TransactionSerializer,
-)
+from accounts.models import User
+from accounts.api.serializers import UserSerializer
 
 
 class UserViewMixin:
@@ -124,93 +120,3 @@ class CurrentUserView(UserDetailView):
 
     def get_object(self):
         return self.request.user
-
-
-class TradingAccountListView(ListCreateAPIView):
-    model = TradingAccount
-    queryset = model.objects.all()
-    serializer_class = TradingAccountSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return super().get_queryset().filter(
-            user=self.request.user
-        )
-
-    def make_initial_deposit(self, serializer):
-        """ Make a deposit transaction with the provided equity """
-        trading_account = serializer.instance
-        deposit_amount = serializer.validated_data["equity"]
-        transaction = Transaction.objects.create(
-            trading_account=trading_account,
-            type="DP",
-            amount=deposit_amount,
-            concept="Initial Deposit",
-        )
-        trading_account.equity = deposit_amount
-        trading_account.total_deposited += deposit_amount
-        transaction.save()
-        trading_account.save()
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        if serializer.validated_data["equity"]:
-            self.make_initial_deposit(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
-
-
-class TradingAccountDetailView(RetrieveUpdateDestroyAPIView):
-    model = TradingAccount
-    queryset = model.objects.all()
-    serializer_class = TradingAccountSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return super().get_queryset().filter(
-            user=self.request.user
-        )
-
-
-class TransactionListView(ListCreateAPIView):
-    model = Transaction
-    queryset = model.objects.all()
-    serializer_class = TransactionSerializer
-
-    def make_deposit(self, trading_account, amount):
-        trading_account.equity += amount
-        trading_account.total_deposited += amount
-        trading_account.save()
-
-    def make_withdrawal(self, trading_account, amount):
-        trading_account.equity -= amount
-        trading_account.total_withdrawn += amount
-        trading_account.save()
-
-    def make_transaction(self, serializer):
-        trading_account = serializer.validated_data["trading_account"]
-        transaction_type = serializer.validated_data["type"]
-        transaction_amount = serializer.validated_data["amount"]
-        if transaction_type == "WT":
-            return self.make_withdrawal(trading_account, transaction_amount)
-        return self.make_deposit(trading_account, transaction_amount)
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.make_transaction(serializer)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(
-            serializer.data, status=status.HTTP_201_CREATED, headers=headers
-        )
-
-
-class TransactionDetailView(RetrieveUpdateDestroyAPIView):
-    model = Transaction
-    queryset = model.objects.all()
-    serializer_class = TransactionSerializer
