@@ -10,16 +10,19 @@ from accounts.models import TradingAccount, Transaction
 from accounts.api.serializers import TradingAccountSerializer
 
 
-class TradingAccountListView(ListCreateAPIView):
-    model = TradingAccount
-    queryset = model.objects.all()
-    serializer_class = TradingAccountSerializer
+class GetQuerysetMixin:
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return super().get_queryset().filter(
             user=self.request.user
         )
+
+
+class TradingAccountListView(GetQuerysetMixin, ListCreateAPIView):
+    model = TradingAccount
+    queryset = model.objects.all()
+    serializer_class = TradingAccountSerializer
 
     def make_initial_deposit(self, serializer):
         """ Make a deposit transaction with the provided equity """
@@ -48,13 +51,7 @@ class TradingAccountListView(ListCreateAPIView):
         )
 
 
-class TradingAccountDetailView(RetrieveUpdateDestroyAPIView):
+class TradingAccountDetailView(GetQuerysetMixin, RetrieveUpdateDestroyAPIView):
     model = TradingAccount
     queryset = model.objects.all()
     serializer_class = TradingAccountSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return super().get_queryset().filter(
-            user=self.request.user
-        )

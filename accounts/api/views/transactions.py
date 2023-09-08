@@ -10,16 +10,19 @@ from accounts.models import Transaction
 from accounts.api.serializers import TransactionSerializer
 
 
-class TransactionListView(ListCreateAPIView):
-    model = Transaction
-    queryset = model.objects.all()
-    serializer_class = TransactionSerializer
+class GetQuerysetMixin:
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return super().get_queryset().filter(
             trading_account__user=self.request.user
         )
+
+
+class TransactionListView(GetQuerysetMixin, ListCreateAPIView):
+    model = Transaction
+    queryset = model.objects.all()
+    serializer_class = TransactionSerializer
 
     def make_deposit(self, trading_account, amount):
         trading_account.equity += amount
@@ -50,13 +53,7 @@ class TransactionListView(ListCreateAPIView):
         )
 
 
-class TransactionDetailView(RetrieveUpdateDestroyAPIView):
+class TransactionDetailView(GetQuerysetMixin, RetrieveUpdateDestroyAPIView):
     model = Transaction
     queryset = model.objects.all()
     serializer_class = TransactionSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return super().get_queryset().filter(
-            trading_account__user=self.request.user
-        )
