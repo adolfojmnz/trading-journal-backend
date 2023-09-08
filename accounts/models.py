@@ -21,6 +21,10 @@ class User(AbstractUser):
 
     for further information refer to https://docs.djangoproject.com/en/4.2/ref/contrib/auth/
     """
+    public = models.BooleanField(
+        default=True,
+        help_text="If True, the profile will be retriverable by other users",
+    )
 
     def __str__(self):
         return self.username
