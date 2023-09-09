@@ -1,6 +1,7 @@
 from django.db import models
 
 from currency.models import CurrencyPair
+from accounts.models import TradingAccount
 
 
 OPERATION_STATUS = [
@@ -15,6 +16,7 @@ POSITIONS = [
 ]
 
 class Operation(models.Model):
+    trading_account = models.ForeignKey(TradingAccount, on_delete=models.PROTECT)
     currency_pair = models.ForeignKey(CurrencyPair, on_delete=models.PROTECT)
     status = models.CharField(choices=OPERATION_STATUS, max_length=2)
     open_datetime = models.DateTimeField()
