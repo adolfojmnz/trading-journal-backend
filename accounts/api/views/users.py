@@ -105,8 +105,8 @@ class UserDetailView(UserViewMixin, RetrieveUpdateDestroyAPIView):
             **kwargs,
         )
 
-    def delete(self):
-        user = self.get_object()
+    def delete(self, request, *args, **kwargs):
+        user = User.objects.get(pk=self.kwargs["pk"])
         user.is_active = False
         user.save()
         return Response(
