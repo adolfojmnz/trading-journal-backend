@@ -8,8 +8,8 @@ from rest_framework.permissions import (
     IsAuthenticated,
 )
 
-from currency.models import Currency, CurrencyPair
-from currency.api.serializers import CurrencySerializer, CurrencyPairSerializer
+from assets.models import Currency, CurrencyPair
+from assets.api.serializers import CurrencySerializer, CurrencyPairSerializer
 
 
 class GetPermissionsMixin:

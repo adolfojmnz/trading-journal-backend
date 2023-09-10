@@ -32,10 +32,7 @@ class CurrencyPair(models.Model):
         default=10,
         help_text="Quantity of USD per standard lot",
     )
-    digits = models.IntegerField(
-        help_text="The amount of digits after decimal point in the price representation",
-    )
-    multiplier = models.IntegerField(
+    pnl_multiplier = models.IntegerField(
         default=10000,
         help_text="Value used to calculate the total profit/loss in pips",
     )
@@ -44,9 +41,6 @@ class CurrencyPair(models.Model):
     )
     swap_short = models.FloatField(
         help_text="In-points overnight interest for a short position",
-    )
-    avg_daily_range = models.IntegerField(
-        help_text="In-points average daily range between highest and lowest price",
     )
 
     def save(self):

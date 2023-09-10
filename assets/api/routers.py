@@ -1,6 +1,6 @@
 from django.urls import path
 
-from currency.api import views
+from assets.api import views
 
 
 urlpatterns = [

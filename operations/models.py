@@ -1,6 +1,6 @@
 from django.db import models
 
-from currency.models import CurrencyPair
+from assets.models import CurrencyPair
 from accounts.models import TradingAccount
 
 
