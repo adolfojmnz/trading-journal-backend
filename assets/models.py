@@ -45,9 +45,9 @@ class CurrencyPair(models.Model):
         help_text="In-points overnight interest for a short position",
     )
 
-    def save(self):
+    def save(self, *args, **kwargs):
         self.symbol = f"{self.base_currency}/{self.quote_currency}"
-        return super().save()
+        return super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return self.symbol
