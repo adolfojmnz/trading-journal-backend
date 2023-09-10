@@ -37,9 +37,11 @@ class CurrencyPair(models.Model):
         help_text="Value used to calculate the total profit/loss in pips",
     )
     swap_long = models.FloatField(
+        default=0.0,
         help_text="In-points overnight interest for a long position",
     )
     swap_short = models.FloatField(
+        default=0.0,
         help_text="In-points overnight interest for a short position",
     )
 
@@ -49,4 +51,3 @@ class CurrencyPair(models.Model):
 
     def __str__(self) -> str:
         return self.symbol
-
