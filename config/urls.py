@@ -9,4 +9,7 @@ urlpatterns = [
 
     # Assets URLs
     path("api/", include("assets.api.routers")),
+
+    # Operations URLs
+    path("api/", include("operations.api.routers")),
 ]
