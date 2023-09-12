@@ -15,7 +15,7 @@ class Currency(models.Model):
 
 class CurrencyPair(models.Model):
     symbol = models.CharField(max_length=64, blank=True, null=True)
-    description = models.CharField(max_length=128)
+    name = models.CharField(max_length=128)
     base_currency = models.ForeignKey(
         Currency,
         on_delete=models.PROTECT,
@@ -28,13 +28,13 @@ class CurrencyPair(models.Model):
         related_name="quote_currency",
         help_text="Currency that is used to price the base currency",
     )
-    usd_per_lot = models.FloatField(
-        default=10,
-        help_text="Quantity of USD per standard lot",
+    pip_decimal_position = models.IntegerField(
+        default=4,
+        help_text="Decimal position use to calculate pip movement."
     )
-    pnl_multiplier = models.IntegerField(
-        default=10000,
-        help_text="Value used to calculate the total profit/loss in pips",
+    contract_size = models.FloatField(
+        default=100000, #100k
+        help_text="",
     )
     swap_long = models.FloatField(
         default=0.0,
