@@ -5,11 +5,11 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     # Accounts URLs
-    path("api/", include("accounts.api.routers")),
+    path("api/", include("accounts.routers")),
 
-    # Assets URLs
-    path("api/", include("assets.api.routers")),
+    # JWT Tokens
+    path("api/", include("tokens.routers")),
 
-    # Operations URLs
-    path("api/", include("operations.api.routers")),
+    # Forex URLs
+    path("api/", include("forex.routers")),
 ]

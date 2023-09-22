@@ -29,9 +29,9 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
 
     # My Apps
-    "assets.apps.AssetsConfig",
     "accounts.apps.AccountsConfig",
-    "operations.apps.OperationsConfig",
+    "tokens.apps.TokensConfig",
+    "forex.apps.ForexConfig",
 ]
 
 MIDDLEWARE = [
