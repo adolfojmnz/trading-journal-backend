@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "accounts.apps.AccountsConfig",
     "tokens.apps.TokensConfig",
     "forex.apps.ForexConfig",
+    "metrics.apps.MetricsConfig",
 ]
 
 MIDDLEWARE = [

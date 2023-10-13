@@ -12,4 +12,7 @@ urlpatterns = [
 
     # Forex URLs
     path("api/", include("forex.routers")),
+
+    # Metrics URL
+    path("api/", include("metrics.routers")),
 ]
