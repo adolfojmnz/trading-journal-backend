@@ -11,6 +11,7 @@ OPERATION_TYPE_CHOICE = [
 
 class Currency(models.Model):
     symbol = models.CharField(
+        unique=True,
         max_length=3,
         help_text="ISO 4217 Currency Code",
     )
@@ -22,8 +23,16 @@ class Currency(models.Model):
 
 
 class CurrencyPair(models.Model):
-    symbol = models.CharField(max_length=64, blank=True, null=True)
-    name = models.CharField(max_length=128)
+    symbol = models.CharField(
+        null=True,
+        blank=True,
+        unique=True,
+        max_length=64,
+    )
+    name = models.CharField(
+        blank=True,
+        max_length=128,
+    )
     base_currency = models.ForeignKey(
         Currency,
         on_delete=models.PROTECT,
@@ -44,6 +53,8 @@ class CurrencyPair(models.Model):
     def save(self, *args, **kwargs):
         if not self.symbol:
             self.symbol = f"{self.base_currency}/{self.quote_currency}"
+        if not self.name:
+            self.name = f"{self.symbol} ForexPair"
         return super().save(*args, **kwargs)
 
     def __str__(self) -> str:
@@ -52,11 +63,18 @@ class CurrencyPair(models.Model):
 
 class ForexOperation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    ticket = models.IntegerField(
+        unique=True,
+        db_index=True,
+        help_text="ID of the trade on the trading platform"
+    )
     type = models.CharField(max_length=1, choices=OPERATION_TYPE_CHOICE)
     currency_pair = models.ForeignKey(CurrencyPair, on_delete=models.PROTECT)
-    opened_on = models.DateTimeField(auto_now_add=True)
-    closed_on = models.DateTimeField(auto_now_add=True)
+    open_datetime = models.DateTimeField()
+    close_datetime = models.DateTimeField()
     open_price = models.FloatField()
+    stop_loss = models.FloatField()
+    take_profit = models.FloatField()
     close_price = models.FloatField()
     volume = models.FloatField(default=0.01)
     pnl = models.FloatField(help_text="Profit/loss in USD")
