@@ -1,15 +1,25 @@
 from django.db.models import Sum, Max, Min, Avg
 
-from rest_framework.serializers import Serializer
-from rest_framework.serializers import SerializerMethodField
+from rest_framework.serializers import (
+    Serializer,
+    ModelSerializer,
+    SerializerMethodField,
+)
 
-from forex.models import ForexOperation
+from trades.models import Trade
 
 
-class ForexMetricsSerializer(Serializer):
+class TradeSerializer(ModelSerializer):
+
+    class Meta:
+        model = Trade
+        fields = "__all__"
+
+
+class TradeMetricsSerializer(Serializer):
 
     def __init__(self, request, *args, **kwargs):
-        self.queryset = ForexOperation.objects.filter(user=request.user)
+        self.queryset = Trade.objects.filter(user=request.user)
         return super().__init__(*args, **kwargs)
 
     def get_total_net_profit(self, *args, **kwargs):

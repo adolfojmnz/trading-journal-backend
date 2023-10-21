@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class MetricsConfig(AppConfig):
+class TradesConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "metrics"
+    name = "trades"
