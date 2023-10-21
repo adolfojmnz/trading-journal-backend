@@ -32,8 +32,8 @@ INSTALLED_APPS = [
     # My Apps
     "accounts.apps.AccountsConfig",
     "tokens.apps.TokensConfig",
-    "forex.apps.ForexConfig",
-    "metrics.apps.MetricsConfig",
+    "assets.apps.AssetsConfig",
+    "trades.apps.TradesConfig",
 ]
 
 MIDDLEWARE = [
