@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from forex.models import Currency, CurrencyPair, ForexOperation
+from assets.models import Currency, CurrencyPair
 
 
 class CurrencySerializer(serializers.ModelSerializer):
@@ -14,11 +14,4 @@ class CurrencyPairSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CurrencyPair
-        fields = "__all__"
-
-
-class ForexOperationSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ForexOperation
         fields = "__all__"

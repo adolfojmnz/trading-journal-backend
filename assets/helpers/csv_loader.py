@@ -1,8 +1,8 @@
 import csv
 
-from django.utils import timezone
+from trades.models import Trade
 
-from forex.models import Currency, CurrencyPair, ForexOperation
+from assets.models import Currency, CurrencyPair
 
 
 def format_datetime(timestring):
@@ -13,7 +13,6 @@ def format_datetime(timestring):
 
 
 def load_trades_from_csv(file_path, user):
-    """Processes a CSV file and saves the data to the database."""
     with open(file_path, "r") as f:
         reader = csv.reader(f)
         next(reader) # Skip the header row.
@@ -21,7 +20,7 @@ def load_trades_from_csv(file_path, user):
         operations = []
         for row in reader:
             try:
-                operation = ForexOperation(
+                operation = Trade(
                     user=user,
                     ticket=int(row[0]),
                     type="S" if row[2] == "sell" else "L",
@@ -40,11 +39,10 @@ def load_trades_from_csv(file_path, user):
                 operations.append(operation)
             except:
                 continue
-        ForexOperation.objects.bulk_create(operations)
+        Trade.objects.bulk_create(operations)
 
 
 def load_currencies_from_csv(file_path):
-    """Processes a CSV file and saves the data to the database."""
     with open(file_path, "r") as f:
         reader = csv.reader(f)
         next(reader) # Skip the header row.
@@ -64,7 +62,6 @@ def load_currencies_from_csv(file_path):
 
 
 def load_currency_pairs_from_csv(file_path):
-    """Processes a CSV file and saves the data to the database."""
     with open(file_path, "r") as f:
         reader = csv.reader(f)
         next(reader) # Skip the header row.

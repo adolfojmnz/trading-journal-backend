@@ -6,11 +6,11 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from forex.models import CurrencyPair
-from forex.serializers import CurrencyPairSerializer
+from assets.models import CurrencyPair
+from assets.serializers import CurrencyPairSerializer
 
 from accounts.utils import create_test_admin, create_test_user
-from forex.utils import (
+from assets.helpers.test_utils import (
     create_eur,
     create_gbp,
     create_eurgbp_pair,

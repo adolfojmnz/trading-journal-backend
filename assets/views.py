@@ -8,11 +8,10 @@ from rest_framework.permissions import (
     IsAuthenticated,
 )
 
-from forex.models import Currency, CurrencyPair, ForexOperation
-from forex.serializers import (
+from assets.models import Currency, CurrencyPair
+from assets.serializers import (
     CurrencySerializer,
     CurrencyPairSerializer,
-    ForexOperationSerializer,
 )
 
 
@@ -47,22 +46,3 @@ class CurrencyPairDetailView(GetPermissionsMixin, RetrieveUpdateDestroyAPIView):
     model = CurrencyPair
     queryset = model.objects.all()
     serializer_class = CurrencyPairSerializer
-
-
-class GetQuerysetMixin:
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user)
-
-
-class ForexOperationListView(GetQuerysetMixin, ListCreateAPIView):
-    model = ForexOperation
-    queryset = model.objects.all()
-    serializer_class = ForexOperationSerializer
-
-
-class ForexOperationDetailView(GetQuerysetMixin, RetrieveUpdateDestroyAPIView):
-    model = ForexOperation
-    queryset = model.objects.all()
-    serializer_class = ForexOperationSerializer
