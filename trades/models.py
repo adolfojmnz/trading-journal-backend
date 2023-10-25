@@ -30,4 +30,5 @@ class Trade(models.Model):
     pnl = models.FloatField(help_text="Profit/loss in USD")
 
     def __str__(self) -> str:
-        return f"{self.type} on {self.currency_pair.symbol}"
+        trade_type = "Short" if self.type == "S" else "Long"
+        return f"{trade_type} on {self.currency_pair.symbol}"
