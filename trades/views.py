@@ -21,11 +21,22 @@ class TradeQuerysetMixin:
 
 
 class TradeMetricsView(APIView):
+    model = Trade
+    queryset = model.objects.all()
     serializer_class = TradeMetricsSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        queryset = self.queryset.filter(user=self.request.user)
+        date = self.request.query_params.get("date")
+        if date:
+            queryset = queryset.filter(
+                open_datetime__date=date
+            )
+        return queryset
+
     def get(self, request, *args, **kwargs):
-        serializer = self.serializer_class(self.request, data=request.data)
+        serializer = self.serializer_class(self.get_queryset(), data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
