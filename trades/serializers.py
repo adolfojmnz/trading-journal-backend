@@ -9,6 +9,20 @@ from rest_framework.serializers import (
 from trades.models import Trade
 
 
+class TradeMetricsMixin:
+
+    def get_average_holding_time(self, queryset=None) -> float:
+        if not queryset.count():
+            return 0.0
+        average_holding_time = queryset.aggregate(
+            average_holding_time=Avg(
+                F('close_datetime') - F('open_datetime'),
+                output_field=DurationField()
+            )
+        )['average_holding_time']
+        return round(average_holding_time.total_seconds(), 2)
+
+
 class TradeSerializer(ModelSerializer):
 
     class Meta:
@@ -16,7 +30,7 @@ class TradeSerializer(ModelSerializer):
         fields = "__all__"
 
 
-class TradeMetricsSerializer(Serializer):
+class TradeMetricsSerializer(TradeMetricsMixin, Serializer):
     net_profit = SerializerMethodField()
     gross_profit = SerializerMethodField()
     gross_loss = SerializerMethodField()
@@ -32,6 +46,10 @@ class TradeMetricsSerializer(Serializer):
     total_long_positions = SerializerMethodField()
     total_short_positions = SerializerMethodField()
     average_holding_time = SerializerMethodField()
+    average_holding_time_per_winning_trade = SerializerMethodField()
+    average_holding_time_per_lossing_trade = SerializerMethodField()
+    average_holding_time_per_long_position = SerializerMethodField()
+    average_holding_time_per_short_position = SerializerMethodField()
 
     def __init__(self, queryset=None, *args, **kwargs):
         self.queryset = queryset
@@ -110,16 +128,34 @@ class TradeMetricsSerializer(Serializer):
         return results or 0
 
     def get_average_holding_time(self, *args, **kwargs):
-        """ Returns the average holding time of all trades in the queryset. """
-        if not self.queryset.count():
-            return 0
-        average_holding_time = self.queryset.aggregate(
-            average_holding_time=Avg(
-                F('close_datetime') - F('open_datetime'),
-                output_field=DurationField()
-            )
-        )['average_holding_time']
-        return round(average_holding_time.total_seconds(), 2)
+        """ Returns the average holding time of all trades in the queryset.
+            Output: average holding time in in seconds.
+        """
+        return super().get_average_holding_time(self.queryset)
+
+    def get_average_holding_time_per_winning_trade(self, *args, **kwargs):
+        """ Returns the average holding time for all trades with profits.
+            Output: average holding time in in seconds.
+        """
+        return super().get_average_holding_time(self.queryset.filter(pnl__gt=0))
+
+    def get_average_holding_time_per_lossing_trade(self, *args, **kwargs):
+        """ Returns the average holding time for all trades with losses.
+            Output: average holding time in in seconds.
+        """
+        return super().get_average_holding_time(self.queryset.filter(pnl__lt=0))
+
+    def get_average_holding_time_per_long_position(self, *args, **kwargs):
+        """ Returns the average holding time for all long position trades.
+            Output: average holding time in in seconds.
+        """
+        return super().get_average_holding_time(self.queryset.filter(type="L"))
+
+    def get_average_holding_time_per_short_position(self, *args, **kwargs) -> float:
+        """ Returns the average holding time for all short position trades.
+            Output: average holding time in in seconds.
+        """
+        return super().get_average_holding_time(self.queryset.filter(type="S"))
 
     class Meta:
         fields = [
@@ -138,4 +174,8 @@ class TradeMetricsSerializer(Serializer):
             "total_long_positions",
             "total_short_positions",
             "average_holding_time",
+            "average_holding_time_per_winning_trade",
+            "average_holding_time_per_lossing_trade",
+            "average_holding_time_per_long_position",
+            "average_holding_time_per_short_position",
         ]
