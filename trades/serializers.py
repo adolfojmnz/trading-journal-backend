@@ -1,4 +1,4 @@
-from django.db.models import Sum, Max, Min, Avg
+from django.db.models import Sum, Max, Min, Avg, F, DurationField
 
 from rest_framework.serializers import (
     Serializer,
@@ -17,12 +17,27 @@ class TradeSerializer(ModelSerializer):
 
 
 class TradeMetricsSerializer(Serializer):
+    net_profit = SerializerMethodField()
+    gross_profit = SerializerMethodField()
+    gross_loss = SerializerMethodField()
+    total_trades = SerializerMethodField()
+    total_profit_trades = SerializerMethodField()
+    total_loss_trades = SerializerMethodField()
+    largest_profit_trade = SerializerMethodField()
+    largest_loss_trade = SerializerMethodField()
+    average_profit_trade = SerializerMethodField()
+    average_loss_trade = SerializerMethodField()
+    percentage_profit_trades = SerializerMethodField()
+    percentage_loss_trades = SerializerMethodField()
+    total_long_positions = SerializerMethodField()
+    total_short_positions = SerializerMethodField()
+    average_holding_time = SerializerMethodField()
 
-    def __init__(self, request, *args, **kwargs):
-        self.queryset = Trade.objects.filter(user=request.user)
+    def __init__(self, queryset=None, *args, **kwargs):
+        self.queryset = queryset
         return super().__init__(*args, **kwargs)
 
-    def get_total_net_profit(self, *args, **kwargs):
+    def get_net_profit(self, *args, **kwargs):
         results = self.queryset.aggregate(Sum("pnl"))["pnl__sum"]
         return round(results or 0, 2)
 
@@ -94,24 +109,21 @@ class TradeMetricsSerializer(Serializer):
         results = self.queryset.filter(type="L").count()
         return results or 0
 
-    total_net_profit = SerializerMethodField()
-    gross_profit = SerializerMethodField()
-    gross_loss = SerializerMethodField()
-    total_trades = SerializerMethodField()
-    total_profit_trades = SerializerMethodField()
-    total_loss_trades = SerializerMethodField()
-    largest_profit_trade = SerializerMethodField()
-    largest_loss_trade = SerializerMethodField()
-    average_profit_trade = SerializerMethodField()
-    average_loss_trade = SerializerMethodField()
-    percentage_profit_trades = SerializerMethodField()
-    percentage_loss_trades = SerializerMethodField()
-    total_long_positions = SerializerMethodField()
-    total_short_positions = SerializerMethodField()
+    def get_average_holding_time(self, *args, **kwargs):
+        """ Returns the average holding time of all trades in the queryset. """
+        if not self.queryset.count():
+            return 0
+        average_holding_time = self.queryset.aggregate(
+            average_holding_time=Avg(
+                F('close_datetime') - F('open_datetime'),
+                output_field=DurationField()
+            )
+        )['average_holding_time']
+        return round(average_holding_time.total_seconds(), 2)
 
     class Meta:
         fields = [
-            "total_net_profit",
+            "net_profit",
             "gross_profit",
             "gross_loss",
             "total_trades",
@@ -125,4 +137,5 @@ class TradeMetricsSerializer(Serializer):
             "percentage_loss_trades",
             "total_long_positions",
             "total_short_positions",
+            "average_holding_time",
         ]
