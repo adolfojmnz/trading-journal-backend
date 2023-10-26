@@ -11,7 +11,7 @@ from trades.models import Trade
 
 class TradeMetricsMixin:
 
-    def get_average_holding_time(self, queryset=None) -> float:
+    def get_average_holding_time(self, queryset) -> float:
         if not queryset.count():
             return 0.0
         average_holding_time = queryset.aggregate(
@@ -52,7 +52,7 @@ class TradeMetricsSerializer(TradeMetricsMixin, Serializer):
     average_holding_time_per_short_position = SerializerMethodField()
 
     def __init__(self, queryset=None, *args, **kwargs):
-        self.queryset = queryset
+        self.queryset = queryset or Trade.objects.all()
         return super().__init__(*args, **kwargs)
 
     def get_net_profit(self, *args, **kwargs):

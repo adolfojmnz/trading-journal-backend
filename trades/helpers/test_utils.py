@@ -40,7 +40,7 @@ def create_forex_trade(user,
         type=type or "L",
         currency_pair=pair or create_eurgbp_pair(),
         open_datetime=open_datetime or timezone.now(),
-        close_datetime=close_datetime or timezone.now(),
+        close_datetime=close_datetime or timezone.now() + timezone.timedelta(hours=3),
         open_price=open_price or 0.85251,
         close_price=close_price or 0.85851,
         stop_loss=stop_loss or 0.85150,
@@ -52,7 +52,7 @@ def create_forex_trade(user,
 
 def create_forex_trade_list(user=None):
     # user that perform the trades
-    user = user or create_test_user()
+    user = user if user else create_test_user()
 
     # create currencies
     eur = create_eur()
@@ -70,22 +70,32 @@ def create_forex_trade_list(user=None):
                        pair=eurgbp,
                        type="S",
                        open_price=0.86234,
-                       close_price=0.86539)  # won trade
+                       close_price=0.86539,
+                       close_datetime=timezone.now()+timezone.timedelta(hours=2),
+                       pnl=30)  # won trade
     create_forex_trade(user,
                        pair=eurjpy,
                        open_price=158.268,
-                       close_price=158.067)  # lost trade
+                       close_price=158.067,
+                       close_datetime=timezone.now()+timezone.timedelta(hours=1),
+                       pnl=-14.7)  # lost trade
     create_forex_trade(user,
                        pair=eurjpy,
                        type="S",
                        open_price=157.447,
-                       close_price=157.656)  # lost trade
+                       close_price=157.656,
+                       close_datetime=timezone.now()+timezone.timedelta(hours=4),
+                       pnl=-14.7)  # lost trade
     create_forex_trade(user,
                        pair=gbpjpy,
                        open_price=185.700,
-                       close_price=185.580)  # lost trade
+                       close_price=185.580,
+                       close_datetime=timezone.now()+timezone.timedelta(minutes=30),
+                       pnl=-9.6)  # lost trade
     create_forex_trade(user,
                        pair=gbpjpy,
                        type="S",
                        open_price=183.948,
-                       close_price=183.647)  # won trade
+                       close_price=183.647,
+                       close_datetime=timezone.now()+timezone.timedelta(minutes=45),
+                       pnl=24)  # won trade

@@ -32,7 +32,7 @@ class TestTradeListEndpoint(TestCase):
                 "type": "L",
                 "currency_pair": create_eurgbp_pair().pk,
                 "open_datetime": timezone.now(),
-                "close_datetime": timezone.now(),
+                "close_datetime": timezone.now() + timezone.timedelta(hours=3),
                 "open_price": 1.25467,
                 "close_price": 1.25667,
                 "stop_loss": 1.25367,
