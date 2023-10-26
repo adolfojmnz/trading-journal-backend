@@ -39,6 +39,8 @@ class TradeMetricsSerializer(TradeMetricsMixin, Serializer):
     total_loss_trades = SerializerMethodField()
     largest_profit_trade = SerializerMethodField()
     largest_loss_trade = SerializerMethodField()
+    smallest_profit_trade = SerializerMethodField()
+    smallest_loss_trade = SerializerMethodField()
     average_profit_trade = SerializerMethodField()
     average_loss_trade = SerializerMethodField()
     percentage_profit_trades = SerializerMethodField()
@@ -89,6 +91,14 @@ class TradeMetricsSerializer(TradeMetricsMixin, Serializer):
 
     def get_largest_loss_trade(self, *args, **kwargs):
         results = self.queryset.aggregate(Min("pnl"))["pnl__min"]
+        return round(results or 0, 2)
+
+    def get_smallest_profit_trade(self, *args, **kwargs):
+        results = self.queryset.filter(pnl__gt=0).aggregate(Min("pnl"))["pnl__min"]
+        return round(results or 0, 2)
+
+    def get_smallest_loss_trade(self, *args, **kwargs):
+        results = self.queryset.filter(pnl__lt=0).aggregate(Max("pnl"))["pnl__max"]
         return round(results or 0, 2)
 
     def get_average_profit_trade(self, *args, **kwargs):
@@ -151,7 +161,7 @@ class TradeMetricsSerializer(TradeMetricsMixin, Serializer):
         """
         return super().get_average_holding_time(self.queryset.filter(type="L"))
 
-    def get_average_holding_time_per_short_position(self, *args, **kwargs) -> float:
+    def get_average_holding_time_per_short_position(self, *args, **kwargs):
         """ Returns the average holding time for all short position trades.
             Output: average holding time in in seconds.
         """
@@ -167,6 +177,8 @@ class TradeMetricsSerializer(TradeMetricsMixin, Serializer):
             "total_loss_trades",
             "largest_profit_trade",
             "largest_loss_trade",
+            "smallest_profit_trade",
+            "smallest_loss_trade",
             "average_profit_trade",
             "average_loss_trade",
             "percentage_profit_trades",

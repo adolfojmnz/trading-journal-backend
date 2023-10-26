@@ -20,6 +20,8 @@ class TestTradesMetricsEndpoint(TestCase):
         "total_loss_trades": 3,
         "largest_profit_trade": 60.0,
         "largest_loss_trade": -14.7,
+        "smallest_profit_trade": 24.0,
+        "smallest_loss_trade": -9.6,
         "average_profit_trade": 38.0,
         "average_loss_trade": -13.0,
         "percentage_profit_trades": 50.0,
