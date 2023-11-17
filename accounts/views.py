@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 
@@ -82,10 +83,17 @@ class UserListView(UserViewMixin, ListCreateAPIView):
 
 class UserDetailView(UserViewMixin, RetrieveUpdateDestroyAPIView):
 
+    def is_requesting_another_user(self):
+        current_user_path = reverse("current-user")
+        if self.request.path == current_user_path:
+            return True
+        if self.request.user == User.objects.get(pk=self.kwargs["pk"]):
+            return True
+
     def get_permissions(self):
-        if self.request.user == User.objects.get(pk=self.kwargs['pk']):
+        if self.is_requesting_another_user():
             self.permission_classes = [IsAuthenticated]
-        elif not self.request.method in SAFE_METHODS:
+        elif self.request.method not in SAFE_METHODS:
             self.permission_classes = [IsAdminUser]
         return super().get_permissions()
 
