@@ -14,33 +14,27 @@ from trades.helpers.test_utils import create_forex_trade
 
 
 class TestTradeDetail(TestCase):
-
     def setUp(self) -> None:
         self.client = APIClient()
         self.user = create_test_user()
         self.client.force_authenticate(user=self.user)
         self.trade = create_forex_trade(self.user)
-        self.url = reverse("trade-detail",
-                           kwargs={"pk": self.trade.pk})
+        self.url = reverse("trade-detail", kwargs={"pk": self.trade.pk})
         return super().setUp()
 
     def test_retrive_trade(self):
         response = self.client.get(self.url)
         self.assertTrue(response.status_code, status.HTTP_200_OK)
-        serializer = TradeSerializer(
-            Trade.objects.get(pk=response.data["id"])
-        )
+        serializer = TradeSerializer(Trade.objects.get(pk=response.data["id"]))
         self.assertEqual(response.data, serializer.data)
 
     def test_update_trade(self):
         data = {"type": "S", "pnl": -60}
-        response = self.client.patch(self.url,
-                                     data=dumps(data),
-                                     content_type="application/json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        serializer = TradeSerializer(
-            Trade.objects.get(pk=response.data["id"])
+        response = self.client.patch(
+            self.url, data=dumps(data), content_type="application/json"
         )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        serializer = TradeSerializer(Trade.objects.get(pk=response.data["id"]))
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(serializer.instance.pnl, -60)

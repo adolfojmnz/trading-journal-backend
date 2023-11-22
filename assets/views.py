@@ -15,34 +15,34 @@ from assets.serializers import (
 )
 
 
-class GetPermissionsMixin:
+class PermissionsMixin:
     permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
-        if not self.request.method in SAFE_METHODS:
+        if self.request.method not in SAFE_METHODS:
             self.permission_classes = [IsAdminUser]
         return super().get_permissions()
 
 
-class CurrencyListView(GetPermissionsMixin, ListCreateAPIView):
+class CurrencyListView(PermissionsMixin, ListCreateAPIView):
     model = Currency
     queryset = model.objects.all()
     serializer_class = CurrencySerializer
 
 
-class CurrencyDetailView(GetPermissionsMixin, RetrieveUpdateDestroyAPIView):
+class CurrencyDetailView(PermissionsMixin, RetrieveUpdateDestroyAPIView):
     model = Currency
     queryset = model.objects.all()
     serializer_class = CurrencySerializer
 
 
-class CurrencyPairListView(GetPermissionsMixin, ListCreateAPIView):
+class CurrencyPairListView(PermissionsMixin, ListCreateAPIView):
     model = CurrencyPair
     queryset = model.objects.all()
     serializer_class = CurrencyPairSerializer
 
 
-class CurrencyPairDetailView(GetPermissionsMixin, RetrieveUpdateDestroyAPIView):
+class CurrencyPairDetailView(PermissionsMixin, RetrieveUpdateDestroyAPIView):
     model = CurrencyPair
     queryset = model.objects.all()
     serializer_class = CurrencyPairSerializer

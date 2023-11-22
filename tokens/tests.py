@@ -9,7 +9,6 @@ from accounts.utils import create_test_user
 
 
 class TestSimpleJWTEndpoint(TestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.user = create_test_user()
@@ -18,7 +17,7 @@ class TestSimpleJWTEndpoint(TestCase):
     def get_token_pair(self) -> Response:
         return self.client.post(
             reverse("token-pair"),
-            data={"username": "test-user", "password": "test#pass"}
+            data={"username": "test-user", "password": "test#pass"},
         )
 
     def test_get_token_pair(self):

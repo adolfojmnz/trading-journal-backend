@@ -15,5 +15,5 @@ class TradeAdmin(admin.ModelAdmin):
         "stop_loss",
         "take_profit",
         "volume",
-        "pnl"
+        "pnl",
     ]

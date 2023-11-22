@@ -5,10 +5,7 @@ from accounts.models import User
 from assets.models import CurrencyPair
 
 
-OPERATION_TYPE_CHOICE = [
-    ("L", "Long"),
-    ("S", "Short")
-]
+OPERATION_TYPE_CHOICE = [("L", "Long"), ("S", "Short")]
 
 
 class Trade(models.Model):
@@ -16,7 +13,7 @@ class Trade(models.Model):
     ticket = models.IntegerField(
         unique=True,
         db_index=True,
-        help_text="ID of the trade on the trading platform"
+        help_text="ID of the trade on the trading platform",
     )
     type = models.CharField(max_length=1, choices=OPERATION_TYPE_CHOICE)
     currency_pair = models.ForeignKey(CurrencyPair, on_delete=models.PROTECT)

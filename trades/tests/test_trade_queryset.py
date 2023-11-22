@@ -12,7 +12,7 @@ from trades.helpers.test_utils import create_forex_trade
 
 
 class TestTradeQuerySet(TestCase):
-    """ Test that forex operations are only retrievable by their owners """
+    """Test that forex operations are only retrievable by their owners"""
 
     def setUp(self) -> None:
         self.client = APIClient()
@@ -20,8 +20,7 @@ class TestTradeQuerySet(TestCase):
         admin = create_test_admin()
         self.client.force_authenticate(user=admin)
         self.operation = create_forex_trade(user)
-        self.url = reverse("trade-detail",
-                           kwargs={"pk": self.operation.pk})
+        self.url = reverse("trade-detail", kwargs={"pk": self.operation.pk})
         return super().setUp()
 
     def test_retrieve_trade(self):
@@ -30,9 +29,9 @@ class TestTradeQuerySet(TestCase):
 
     def test_update_trade(self):
         data = {"type": "S", "pnl": -60}
-        response = self.client.patch(self.url,
-                                     data=dumps(data),
-                                     content_type="application/json")
+        response = self.client.patch(
+            self.url, data=dumps(data), content_type="application/json"
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_trade(self):

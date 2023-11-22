@@ -15,7 +15,6 @@ from assets.helpers.test_utils import create_eurgbp_pair
 
 
 class TestTradeListEndpoint(TestCase):
-
     def setUp(self) -> None:
         self.client = APIClient()
         self.user = create_test_user()
@@ -39,12 +38,10 @@ class TestTradeListEndpoint(TestCase):
                 "take_profit": 1.25666,
                 "volume": 0.1,
                 "pnl": 20,
-            }
+            },
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        serializer = TradeSerializer(
-            Trade.objects.get(pk=response.data["id"])
-        )
+        serializer = TradeSerializer(Trade.objects.get(pk=response.data["id"]))
         self.assertEqual(response.data, serializer.data)
         self.tearDown()
 
@@ -52,9 +49,7 @@ class TestTradeListEndpoint(TestCase):
         create_forex_trade_list(self.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        serializer = TradeSerializer(
-            Trade.objects.all(), many=True
-        )
+        serializer = TradeSerializer(Trade.objects.all(), many=True)
         self.assertEqual(response.data, serializer.data)
         self.assertTrue(Trade.objects.count() > 0)
         self.tearDown()
