@@ -36,7 +36,7 @@ class TestCurrencyPairList(SetUpMixin):
 
     def setUp(self) -> None:
         self.authenticate_admin_client()
-        self.url = reverse("currency-pair-list")
+        self.url = reverse("pair-list")
 
     def test_create_currency_pair(self):
         data = {
@@ -66,7 +66,7 @@ class TestCurrencyPairListForNonAdmin(SetUpMixin):
 
     def setUp(self) -> None:
         self.authenticate_simple_user_client()
-        self.url = reverse("currency-pair-list")
+        self.url = reverse("pair-list")
 
     def test_create_currency_pair(self):
         """ Non-admin users cannot create currency pairs. """
@@ -94,7 +94,7 @@ class SetUpMixin(TestCase):
     def setUp(self) -> None:
         self.currency_pair = create_eurgbp_pair()
         self.url = reverse(
-            "currency-pair-detail",
+            "pair-detail",
             kwargs={"pk": self.currency_pair.pk},
         )
 
