@@ -10,21 +10,19 @@ from trades.models import Trade
 
 
 class TradeMetricsMixin:
-
     def get_average_holding_time(self, queryset) -> float:
         if not queryset.count():
             return 0.0
         average_holding_time = queryset.aggregate(
             average_holding_time=Avg(
-                F('close_datetime') - F('open_datetime'),
-                output_field=DurationField()
+                F("close_datetime") - F("open_datetime"),
+                output_field=DurationField(),
             )
-        )['average_holding_time']
+        )["average_holding_time"]
         return round(average_holding_time.total_seconds(), 2)
 
 
 class TradeSerializer(ModelSerializer):
-
     class Meta:
         model = Trade
         fields = "__all__"
@@ -74,15 +72,15 @@ class MetricsSummarySerializer(TradeMetricsMixin, Serializer):
         return self.queryset.filter(pnl__lt=0).count()
 
     def get_average_profit(self, *args, **kwargs):
-        results = self.queryset.filter(
-            pnl__gt=0
-        ).aggregate(Avg("pnl"))["pnl__avg"]
+        results = self.queryset.filter(pnl__gt=0).aggregate(
+            Avg("pnl")
+        )["pnl__avg"]
         return round(results or 0, 2)
 
     def get_average_loss(self, *args, **kwargs):
-        results = self.queryset.filter(
-            pnl__lt=0
-        ).aggregate(Avg("pnl"))["pnl__avg"]
+        results = self.queryset.filter(pnl__lt=0).aggregate(
+            Avg("pnl")
+        )["pnl__avg"]
         return round(results or 0, 2)
 
     def get_percentage_profit_trades(self, *args, **kwargs):
@@ -90,7 +88,7 @@ class MetricsSummarySerializer(TradeMetricsMixin, Serializer):
         profit_trades = self.queryset.filter(pnl__gt=0).count()
         if not profit_trades or not total_trades:
             return 0.00
-        results = (profit_trades/total_trades) * 100
+        results = (profit_trades / total_trades) * 100
         return round(results, 2)
 
     def get_percentage_loss_trades(self, *args, **kwargs):
@@ -98,12 +96,12 @@ class MetricsSummarySerializer(TradeMetricsMixin, Serializer):
         loss_trades = self.queryset.filter(pnl__lt=0).count()
         if not total_trades or not loss_trades:
             return 0.00
-        results = (loss_trades/total_trades) * 100
+        results = (loss_trades / total_trades) * 100
         return round(results, 2)
 
     def get_average_holding_time(self, *args, **kwargs):
-        """ Returns the average holding time of all trades in the queryset.
-            Output: average holding time in in seconds.
+        """Returns the average holding time of all trades in the queryset.
+        Output: average holding time in in seconds.
         """
         return super().get_average_holding_time(self.queryset)
 
@@ -160,7 +158,9 @@ class ProfitAndLossSerializer(Serializer):
         return round(results or 0, 2)
 
     def get_largest_profit(self, *args, **kwargs):
-        results = self.queryset.aggregate(Max("pnl"))["pnl__max"]
+        results = self.queryset.aggregate(
+            Max("pnl")
+        )["pnl__max"]
         return round(results or 0, 2)
 
     def get_largest_loss(self, *args, **kwargs):
@@ -180,15 +180,15 @@ class ProfitAndLossSerializer(Serializer):
         return round(results or 0, 2)
 
     def get_average_profit(self, *args, **kwargs):
-        results = self.queryset.filter(
-            pnl__gt=0
-        ).aggregate(Avg("pnl"))["pnl__avg"]
+        results = self.queryset.filter(pnl__gt=0).aggregate(
+            Avg("pnl")
+        )["pnl__avg"]
         return round(results or 0, 2)
 
     def get_average_loss(self, *args, **kwargs):
-        results = self.queryset.filter(
-            pnl__lt=0
-        ).aggregate(Avg("pnl"))["pnl__avg"]
+        results = self.queryset.filter(pnl__lt=0).aggregate(
+            Avg("pnl")
+        )["pnl__avg"]
         return round(results or 0, 2)
 
     class Meta:
@@ -253,42 +253,38 @@ class HoldingTimeSerializer(TradeMetricsMixin, Serializer):
         return super().__init__(*args, **kwargs)
 
     def get_average_holding_time(self, *args, **kwargs):
-        """ Returns the average holding time of all trades in the queryset.
-            Output: average holding time in in seconds.
+        """Returns the average holding time of all trades in the queryset.
+        Output: average holding time in in seconds.
         """
         return super().get_average_holding_time(self.queryset)
 
     def get_average_holding_time_per_winning_trade(self, *args, **kwargs):
-        """ Returns the average holding time for all trades with profits.
-            Output: average holding time in in seconds.
+        """Returns the average holding time for all trades with profits.
+        Output: average holding time in in seconds.
         """
         return super().get_average_holding_time(
             self.queryset.filter(pnl__gt=0)
         )
 
     def get_average_holding_time_per_lossing_trade(self, *args, **kwargs):
-        """ Returns the average holding time for all trades with losses.
-            Output: average holding time in in seconds.
+        """Returns the average holding time for all trades with losses.
+        Output: average holding time in in seconds.
         """
         return super().get_average_holding_time(
             self.queryset.filter(pnl__lt=0)
         )
 
     def get_average_holding_time_per_long_position(self, *args, **kwargs):
-        """ Returns the average holding time for all long position trades.
-            Output: average holding time in in seconds.
+        """Returns the average holding time for all long position trades.
+        Output: average holding time in in seconds.
         """
-        return super().get_average_holding_time(
-            self.queryset.filter(type="L")
-        )
+        return super().get_average_holding_time(self.queryset.filter(type="L"))
 
     def get_average_holding_time_per_short_position(self, *args, **kwargs):
-        """ Returns the average holding time for all short position trades.
-            Output: average holding time in in seconds.
+        """Returns the average holding time for all short position trades.
+        Output: average holding time in in seconds.
         """
-        return super().get_average_holding_time(
-            self.queryset.filter(type="S")
-        )
+        return super().get_average_holding_time(self.queryset.filter(type="S"))
 
     class Meta:
         fields = [
@@ -349,19 +345,21 @@ class PositionVolumeSerializer(TradeMetricsMixin, Serializer):
         )["volume__max"]
 
     def get_average_position_volume(self, *args, **kwargs):
-        results = self.queryset.aggregate(Avg("volume"))["volume__avg"]
+        results = self.queryset.aggregate(
+            Avg("volume")
+        )["volume__avg"]
         return round(results, 2)
 
     def get_average_position_volume_per_winning_trade(self, *args, **kwargs):
-        results = self.queryset.filter(pnl__gt=0).aggregate(
-            Avg("volume")
-        )["volume__avg"]
+        results = self.queryset.filter(pnl__gt=0).aggregate(Avg("volume"))[
+            "volume__avg"
+        ]
         return round(results, 2)
 
     def get_average_position_volume_per_losing_trade(self, *args, **kwargs):
-        results = self.queryset.filter(pnl__lt=0).aggregate(
-            Avg("volume")
-        )["volume__avg"]
+        results = self.queryset.filter(pnl__lt=0).aggregate(Avg("volume"))[
+            "volume__avg"
+        ]
         return round(results, 2)
 
     def get_average_position_volume_per_long_position(self, *args, **kwargs):
@@ -378,17 +376,12 @@ class PositionVolumeSerializer(TradeMetricsMixin, Serializer):
 
     class Meta:
         fields = [
-            # Min Position Volume
             "min_position_volume",
             "min_position_volume_per_winning_trade",
             "min_position_volume_per_losing_trade",
-
-            # Max Position Volume
             "max_position_volume",
             "max_position_volume_per_winning_trade",
             "max_position_volume_per_losing_trade",
-
-            # Average Position Volume
             "average_position_volume",
             "average_position_volume_per_winning_trade",
             "average_position_volume_per_losing_trade",

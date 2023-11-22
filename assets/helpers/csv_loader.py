@@ -6,7 +6,7 @@ from assets.models import Currency, CurrencyPair
 
 
 def format_datetime(timestring):
-    """ Converts the timestring to ISO format """
+    """Converts the timestring to ISO format"""
     date = timestring.split(" ")[0].split(".")
     time = timestring.split(" ")[1]
     return f"{date[0]}-{date[1]}-{date[2]} {time}"
@@ -15,7 +15,7 @@ def format_datetime(timestring):
 def load_trades_from_csv(file_path, user):
     with open(file_path, "r") as f:
         reader = csv.reader(f)
-        next(reader) # Skip the header row.
+        next(reader)  # Skip the header row.
 
         operations = []
         for row in reader:
@@ -24,9 +24,7 @@ def load_trades_from_csv(file_path, user):
                     user=user,
                     ticket=int(row[0]),
                     type="S" if row[2] == "sell" else "L",
-                    currency_pair=CurrencyPair.objects.get(
-                        symbol__iexact=row[4]
-                    ),
+                    currency_pair=CurrencyPair.objects.get(symbol__iexact=row[4]),
                     open_datetime=format_datetime(row[1]),
                     close_datetime=format_datetime(row[8]),
                     open_price=float(row[5]),
@@ -45,7 +43,7 @@ def load_trades_from_csv(file_path, user):
 def load_currencies_from_csv(file_path):
     with open(file_path, "r") as f:
         reader = csv.reader(f)
-        next(reader) # Skip the header row.
+        next(reader)  # Skip the header row.
 
         currencies = []
         for row in reader:
@@ -64,7 +62,7 @@ def load_currencies_from_csv(file_path):
 def load_currency_pairs_from_csv(file_path):
     with open(file_path, "r") as f:
         reader = csv.reader(f)
-        next(reader) # Skip the header row.
+        next(reader)  # Skip the header row.
 
         pairs = []
         for row in reader:

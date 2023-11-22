@@ -42,8 +42,7 @@ class CurrencyPair(models.Model):
         help_text="Currency that is used to price the base currency",
     )
     pip_decimal_position = models.IntegerField(
-        default=4,
-        help_text="Decimal position use to calculate pip movement."
+        default=4, help_text="Decimal position use to calculate pip movement."
     )
 
     def save(self, *args, **kwargs):

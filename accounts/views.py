@@ -31,9 +31,9 @@ class UserViewMixin:
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data,
-                        status=status.HTTP_201_CREATED,
-                        headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def perform_create(self, serializer):
         serializer.save()
@@ -47,31 +47,26 @@ class UserViewMixin:
     def handle_patch_request(self, request, *args, **kwargs):
         return super().patch(request, *args, **kwargs)
 
-    def handle_request_on_valid_password(self,
-                                     handler_func,
-                                     request,
-                                    *args,
-                                    **kwargs):
-        password = request.data.get('password')
+    def handle_request_on_valid_password(self, handler_func, request, *args, **kwargs):
+        password = request.data.get("password")
         try:
             validate_password(password)
             return handler_func(request, *args, **kwargs)
         except ValidationError as error:
             return Response(
-                {'Validation Error': f'{error}'},
+                {"Validation Error": f"{error}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         except TypeError as error:
-            if request.method in ['PATCH']:
+            if request.method in ["PATCH"]:
                 return handler_func(request, *args, **kwargs)
             return Response(
-                {'password': ['This field is required.']},
+                {"password": ["This field is required."]},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
 
 class UserListView(UserViewMixin, ListCreateAPIView):
-
     def post(self, request, *args, **kwargs):
         return self.handle_request_on_valid_password(
             self.handle_post_request,
@@ -82,7 +77,6 @@ class UserListView(UserViewMixin, ListCreateAPIView):
 
 
 class UserDetailView(UserViewMixin, RetrieveUpdateDestroyAPIView):
-
     def is_requesting_another_user(self):
         current_user_path = reverse("current-user")
         if self.request.path == current_user_path:
@@ -118,7 +112,7 @@ class UserDetailView(UserViewMixin, RetrieveUpdateDestroyAPIView):
         user.is_active = False
         user.save()
         return Response(
-            {'message': 'The user has been set as inactive.'},
+            {"message": "The user has been set as inactive."},
             status=status.HTTP_200_OK,
         )
 

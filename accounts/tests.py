@@ -13,7 +13,6 @@ from accounts.utils import create_test_user
 
 
 class TestUserListEndpoint(TestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.url = reverse("user-list")
@@ -23,9 +22,9 @@ class TestUserListEndpoint(TestCase):
         self.client.force_authenticate(user=create_test_user())
 
     def test_create_user(self):
-        response = self.client.post(self.url,
-                                    data={"username": "test-user",
-                                          "password": "test#pass"})
+        response = self.client.post(
+            self.url, data={"username": "test-user", "password": "test#pass"}
+        )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         serializer = UserSerializer(User.objects.get(pk=response.data["id"]))
         self.assertEqual(response.data, serializer.data)
@@ -40,7 +39,6 @@ class TestUserListEndpoint(TestCase):
 
 
 class TestUserDetailEndpoint(TestCase):
-
     def setUp(self):
         self.user = create_test_user()
         self.url = reverse(
@@ -58,9 +56,11 @@ class TestUserDetailEndpoint(TestCase):
         self.assertEqual(response.data, serializer.data)
 
     def test_update_user(self):
-        response = self.client.patch(self.url,
-                                    content_type="application/json",
-                                    data=dumps({"username": "new-username"}))
+        response = self.client.patch(
+            self.url,
+            content_type="application/json",
+            data=dumps({"username": "new-username"}),
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         serializer = UserSerializer(User.objects.get(pk=self.user.pk))
         self.assertEqual(response.data, serializer.data)

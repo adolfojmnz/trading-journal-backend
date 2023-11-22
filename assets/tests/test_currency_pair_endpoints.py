@@ -19,7 +19,6 @@ from assets.helpers.test_utils import (
 
 
 class SetUpMixin(TestCase):
-
     def authenticate_admin_client(self):
         admin = create_test_admin()
         self.client = APIClient()
@@ -32,7 +31,7 @@ class SetUpMixin(TestCase):
 
 
 class TestCurrencyPairList(SetUpMixin):
-    """ Tests with admin authentication """
+    """Tests with admin authentication"""
 
     def setUp(self) -> None:
         self.authenticate_admin_client()
@@ -62,14 +61,14 @@ class TestCurrencyPairList(SetUpMixin):
 
 
 class TestCurrencyPairListForNonAdmin(SetUpMixin):
-    """ Test the permission non-admin users have over the enndpoint. """
+    """Test the permission non-admin users have over the enndpoint."""
 
     def setUp(self) -> None:
         self.authenticate_simple_user_client()
         self.url = reverse("pair-list")
 
     def test_create_currency_pair(self):
-        """ Non-admin users cannot create currency pairs. """
+        """Non-admin users cannot create currency pairs."""
         data = {
             "name": "EUR/GBP Forex Pair",
             "base_currency": create_eur().pk,
@@ -79,7 +78,7 @@ class TestCurrencyPairListForNonAdmin(SetUpMixin):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_retrieve_currency_pair_list(self):
-        """ Authenticated users can retrieve the list of currency pairs. """
+        """Authenticated users can retrieve the list of currency pairs."""
         create_currency_pair_list()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -90,7 +89,6 @@ class TestCurrencyPairListForNonAdmin(SetUpMixin):
 
 
 class SetUpMixin(TestCase):
-
     def setUp(self) -> None:
         self.currency_pair = create_eurgbp_pair()
         self.url = reverse(
@@ -115,7 +113,7 @@ class SetUpMixin(TestCase):
 
 
 class TestCurrencyPairDetail(SetUpMixin):
-    """ Tests the endpoint with admin authentication """
+    """Tests the endpoint with admin authentication"""
 
     def setUp(self) -> None:
         self.authenticate_admin_client()
@@ -129,29 +127,29 @@ class TestCurrencyPairDetail(SetUpMixin):
 
     def test_update_currency_pair(self):
         data = {"name": "New name", "pip_decimal_points": 2}
-        response = self.client.patch(self.url,
-                                     data=dumps(data),
-                                     content_type="application/json")
+        response = self.client.patch(
+            self.url, data=dumps(data), content_type="application/json"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         serializer = self.get_serialized_object()
         self.assertEqual(response.data, serializer.data)
 
     def test_delete_currency_pair(self):
-        """ This tests passes because the currency pair to be
-            deleted in not associate to other instances. """
+        """This tests passes because the currency pair to be
+        deleted in not associate to other instances."""
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class TestCurrencyPairDetailForNonAdmin(SetUpMixin):
-    """ Test the endpoint with non-admin authentication. """
+    """Test the endpoint with non-admin authentication."""
 
     def setUp(self) -> None:
         self.authenticate_simple_user_client()
         return super().setUp()
 
     def test_retrieve_currency_pair(self):
-        """ Authenticated users can retrieve currency pairs. """
+        """Authenticated users can retrieve currency pairs."""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         serializer = self.get_serialized_object()
@@ -159,12 +157,12 @@ class TestCurrencyPairDetailForNonAdmin(SetUpMixin):
 
     def test_update_currency_pair(self):
         data = {"pip_decimal_position": 2}
-        response = self.client.post(self.url,
-                                    data=dumps(data),
-                                    content_type="application/json")
+        response = self.client.post(
+            self.url, data=dumps(data), content_type="application/json"
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_currency_pair(self):
-        """ Non-admin users cannot delete currency pairs. """
+        """Non-admin users cannot delete currency pairs."""
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

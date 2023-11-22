@@ -10,19 +10,23 @@ from assets.models import Currency
 from assets.serializers import CurrencySerializer
 
 from accounts.utils import create_test_admin, create_test_user
-from assets.helpers.test_utils import EUR_DATA, create_eur, create_currency_pair_list
+from assets.helpers.test_utils import (
+    EUR_DATA,
+    create_eur,
+    create_currency_pair_list,
+)
 
 
 class SetUpTestCase(TestCase):
-
     def setUp(self) -> None:
         self.client = APIClient()
         self.admin = create_test_admin()
         self.client.force_authenticate(user=self.admin)
         self.url = reverse("currency-list")
 
+
 class TestCurrencyList(SetUpTestCase):
-    """ Tets the currency-list endpoint with admin authentication """
+    """Tets the currency-list endpoint with admin authentication"""
 
     def test_create_currency(self):
         repsonse = self.client.post(self.url, data=EUR_DATA)
@@ -41,7 +45,7 @@ class TestCurrencyList(SetUpTestCase):
 
 
 class TestCurrencyListPermissions(SetUpTestCase):
-    """ Test the permissions that a non-admin user has over the endpoint """
+    """Test the permissions that a non-admin user has over the endpoint"""
 
     def setUp(self) -> None:
         self.client = APIClient()
@@ -50,12 +54,12 @@ class TestCurrencyListPermissions(SetUpTestCase):
         self.url = reverse("currency-list")
 
     def test_create_currency(self):
-        """ Non admin users cannot create currencies """
+        """Non admin users cannot create currencies"""
         repsonse = self.client.post(self.url, data=EUR_DATA)
         self.assertEqual(repsonse.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_retrieve_currency_list(self):
-        """ Authenticated users can retrive the list of currencies """
+        """Authenticated users can retrive the list of currencies"""
         create_currency_pair_list()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -64,7 +68,7 @@ class TestCurrencyListPermissions(SetUpTestCase):
 
 
 class TestCurrencyDetail(TestCase):
-    """ Tets the currency-detail endpoint with admin authentication """
+    """Tets the currency-detail endpoint with admin authentication"""
 
     def setUp(self) -> None:
         admin = create_test_admin()
@@ -82,9 +86,11 @@ class TestCurrencyDetail(TestCase):
         self.assertEqual(repsonse.data, serializer.data)
 
     def test_update_currency(self):
-        response = self.client.patch(self.url,
-                                     content_type="application/json",
-                                     data=dumps({"name": "New name"}))
+        response = self.client.patch(
+            self.url,
+            content_type="application/json",
+            data=dumps({"name": "New name"}),
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         serializer = CurrencySerializer(
             Currency.objects.get(pk=self.currency.pk)
@@ -92,14 +98,14 @@ class TestCurrencyDetail(TestCase):
         self.assertEqual(response.data, serializer.data)
 
     def test_delete_currency(self):
-        """ This test is able to pass because the currency to be deleted
-            is not related to any CurrencyPair intance. """
+        """This test is able to pass because the currency to be deleted
+        is not related to any CurrencyPair intance."""
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class TestCurrencyDetailPermissions(TestCase):
-    """ Test the permissions that a non-admin user has over the endpoint """
+    """Test the permissions that a non-admin user has over the endpoint"""
 
     def setUp(self) -> None:
         simple_user = create_test_user()
@@ -117,9 +123,11 @@ class TestCurrencyDetailPermissions(TestCase):
         self.assertEqual(repsonse.data, serializer.data)
 
     def test_update_currency(self):
-        response = self.client.patch(self.url,
-                                     content_type="application/json",
-                                     data=dumps({"name": "New name"}))
+        response = self.client.patch(
+            self.url,
+            content_type="application/json",
+            data=dumps({"name": "New name"}),
+        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_delete_currency(self):
