@@ -10,20 +10,25 @@ from rest_framework.generics import (
 from trades.models import Trade
 from trades.serializers import TradeSerializer
 
-from trades.serializers import TradeMetricsSerializer
+from trades.serializers import (
+    MetricsSummarySerializer,
+    ProfitAndLossSerializer,
+    TotalTradesSerializer,
+    HoldingTimeSerializer,
+    PositionVolumeSerializer,
+)
 
 
 class TradeQuerysetMixin:
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
 
     def get_queryset(self):
         return super().get_queryset().filter(user=self.request.user)
 
 
-class TradeMetricsView(APIView):
+class MetricsMixin(APIView):
     model = Trade
     queryset = model.objects.all()
-    serializer_class = TradeMetricsSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -36,7 +41,10 @@ class TradeMetricsView(APIView):
         return queryset
 
     def get(self, request, *args, **kwargs):
-        serializer = self.serializer_class(self.get_queryset(), data=request.data)
+        serializer = self.serializer_class(
+            self.get_queryset(),
+            data=request.data
+        )
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -51,3 +59,23 @@ class TradeDetailView(TradeQuerysetMixin, RetrieveUpdateDestroyAPIView):
     model = Trade
     queryset = model.objects.all()
     serializer_class = TradeSerializer
+
+
+class MetricsSummaryView(MetricsMixin):
+    serializer_class = MetricsSummarySerializer
+
+
+class ProfitAndLossView(MetricsMixin):
+    serializer_class = ProfitAndLossSerializer
+
+
+class TotalTradesView(MetricsMixin):
+    serializer_class = TotalTradesSerializer
+
+
+class HoldingTimeView(MetricsMixin):
+    serializer_class = HoldingTimeSerializer
+
+
+class PositionVolumeView(MetricsMixin):
+    serializer_class = PositionVolumeSerializer
