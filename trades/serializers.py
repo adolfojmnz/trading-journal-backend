@@ -12,7 +12,7 @@ from trades.models import Trade
 class TradeMetricsMixin:
     def get_average_holding_time(self, queryset) -> float:
         if not queryset.count():
-            return 0.0
+            return round(0, 2)
         average_holding_time = queryset.aggregate(
             average_holding_time=Avg(
                 F("close_datetime") - F("open_datetime"),
