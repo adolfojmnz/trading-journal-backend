@@ -1,76 +1,43 @@
-from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
 )
 
-from trades.models import Trade
-from trades.serializers import TradeSerializer
-
 from trades.serializers import (
+    TradeSerializer,
     MetricsSummarySerializer,
     ProfitAndLossSerializer,
     TotalTradesSerializer,
     HoldingTimeSerializer,
     PositionVolumeSerializer,
 )
+from trades.view_mixins import TradeViewMixin, MetricsViewMixin
 
 
-class TradeQuerysetMixin:
-    permission_classes = []
-
-    def get_queryset(self):
-        return super().get_queryset().filter(user=self.request.user)
-
-
-class MetricsMixin(APIView):
-    model = Trade
-    queryset = model.objects.all()
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        queryset = self.queryset.filter(user=self.request.user)
-        date = self.request.query_params.get("date")
-        if date:
-            queryset = queryset.filter(open_datetime__date=date)
-        return queryset
-
-    def get(self, request, *args, **kwargs):
-        serializer = self.serializer_class(self.get_queryset(), data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class TradeListView(TradeQuerysetMixin, ListCreateAPIView):
-    model = Trade
-    queryset = model.objects.all()
+class TradeListView(TradeViewMixin, ListCreateAPIView):
     serializer_class = TradeSerializer
 
 
-class TradeDetailView(TradeQuerysetMixin, RetrieveUpdateDestroyAPIView):
-    model = Trade
-    queryset = model.objects.all()
+class TradeDetailView(TradeViewMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = TradeSerializer
 
 
-class MetricsSummaryView(MetricsMixin):
+class MetricsSummaryView(MetricsViewMixin, APIView):
     serializer_class = MetricsSummarySerializer
 
 
-class ProfitAndLossView(MetricsMixin):
+class ProfitAndLossView(MetricsViewMixin, APIView):
     serializer_class = ProfitAndLossSerializer
 
 
-class TotalTradesView(MetricsMixin):
+class TotalTradesView(MetricsViewMixin, APIView):
     serializer_class = TotalTradesSerializer
 
 
-class HoldingTimeView(MetricsMixin):
+class HoldingTimeView(MetricsViewMixin, APIView):
     serializer_class = HoldingTimeSerializer
 
 
-class PositionVolumeView(MetricsMixin):
+class PositionVolumeView(MetricsViewMixin, APIView):
     serializer_class = PositionVolumeSerializer
