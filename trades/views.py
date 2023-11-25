@@ -1,4 +1,3 @@
-from rest_framework.views import APIView
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
@@ -23,21 +22,21 @@ class TradeDetailView(TradeViewMixin, RetrieveUpdateDestroyAPIView):
     serializer_class = TradeSerializer
 
 
-class MetricsSummaryView(MetricsViewMixin, APIView):
+class MetricsSummaryView(MetricsViewMixin):
     serializer_class = MetricsSummarySerializer
 
 
-class ProfitAndLossView(MetricsViewMixin, APIView):
+class ProfitAndLossView(MetricsViewMixin):
     serializer_class = ProfitAndLossSerializer
 
 
-class TotalTradesView(MetricsViewMixin, APIView):
+class TotalTradesView(MetricsViewMixin):
     serializer_class = TotalTradesSerializer
 
 
-class HoldingTimeView(MetricsViewMixin, APIView):
+class HoldingTimeView(MetricsViewMixin):
     serializer_class = HoldingTimeSerializer
 
 
-class PositionVolumeView(MetricsViewMixin, APIView):
+class PositionVolumeView(MetricsViewMixin):
     serializer_class = PositionVolumeSerializer

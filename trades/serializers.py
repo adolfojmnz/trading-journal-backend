@@ -42,8 +42,8 @@ class MetricsSummarySerializer(TradeMetricsMixin, Serializer):
     average_holding_time = SerializerMethodField()
     average_position_volume = SerializerMethodField()
 
-    def __init__(self, queryset=None, *args, **kwargs):
-        self.queryset = queryset or Trade.objects.all()
+    def __init__(self, queryset, *args, **kwargs):
+        self.queryset = queryset
         return super().__init__(*args, **kwargs)
 
     def get_net_profit(self, *args, **kwargs):
@@ -107,7 +107,7 @@ class MetricsSummarySerializer(TradeMetricsMixin, Serializer):
 
     def get_average_position_volume(self, *args, **kwargs):
         results = self.queryset.aggregate(Avg("volume"))["volume__avg"]
-        return round(results, 2)
+        return round(results or 0, 2)
 
     class Meta:
         fields = [
@@ -137,8 +137,8 @@ class ProfitAndLossSerializer(Serializer):
     average_profit = SerializerMethodField()
     average_loss = SerializerMethodField()
 
-    def __init__(self, queryset=None, *args, **kwargs):
-        self.queryset = queryset or Trade.objects.all()
+    def __init__(self, queryset, *args, **kwargs):
+        self.queryset = queryset
         return super().__init__(*args, **kwargs)
 
     def get_net_profit(self, *args, **kwargs):
@@ -212,8 +212,8 @@ class TotalTradesSerializer(TradeMetricsMixin, Serializer):
     total_long_positions = SerializerMethodField()
     total_short_positions = SerializerMethodField()
 
-    def __init__(self, queryset=None, *args, **kwargs):
-        self.queryset = queryset or Trade.objects.all()
+    def __init__(self, queryset, *args, **kwargs):
+        self.queryset = queryset
         return super().__init__(*args, **kwargs)
 
     def get_total_trades(self, *args, **kwargs):
@@ -248,8 +248,8 @@ class HoldingTimeSerializer(TradeMetricsMixin, Serializer):
     average_holding_time_per_long_position = SerializerMethodField()
     average_holding_time_per_short_position = SerializerMethodField()
 
-    def __init__(self, queryset=None, *args, **kwargs):
-        self.queryset = queryset or Trade.objects.all()
+    def __init__(self, queryset, *args, **kwargs):
+        self.queryset = queryset
         return super().__init__(*args, **kwargs)
 
     def get_average_holding_time(self, *args, **kwargs):
@@ -314,65 +314,65 @@ class PositionVolumeSerializer(TradeMetricsMixin, Serializer):
     average_position_volume_per_winning_trade = SerializerMethodField()
     average_position_volume_per_losing_trade = SerializerMethodField()
 
-    def __init__(self, queryset=None, *args, **kwargs):
-        self.queryset = queryset or Trade.objects.all()
+    def __init__(self, queryset, *args, **kwargs):
+        self.queryset = queryset
         return super().__init__(*args, **kwargs)
 
     def get_min_position_volume(self, *args, **kwargs):
-        return self.queryset.aggregate(Min("volume"))["volume__min"]
+        return self.queryset.aggregate(Min("volume"))["volume__min"] or 0
 
     def get_max_position_volume(self, *args, **kwargs):
-        return self.queryset.aggregate(Max("volume"))["volume__max"]
+        return self.queryset.aggregate(Max("volume"))["volume__max"] or 0
 
     def get_min_position_volume_per_winning_trade(self, *args, **kwargs):
         return self.queryset.filter(pnl__gt=0).aggregate(
             Min("volume")
-        )["volume__min"]
+        )["volume__min"] or 0
 
     def get_min_position_volume_per_losing_trade(self, *args, **kwargs):
         return self.queryset.filter(pnl__lt=0).aggregate(
             Min("volume")
-        )["volume__min"]
+        )["volume__min"] or 0
 
     def get_max_position_volume_per_winning_trade(self, *args, **kwargs):
         return self.queryset.filter(pnl__gt=0).aggregate(
             Max("volume")
-        )["volume__max"]
+        )["volume__max"] or 0
 
     def get_max_position_volume_per_losing_trade(self, *args, **kwargs):
         return self.queryset.filter(pnl__lt=0).aggregate(
             Max("volume")
-        )["volume__max"]
+        )["volume__max"] or 0
 
     def get_average_position_volume(self, *args, **kwargs):
         results = self.queryset.aggregate(
             Avg("volume")
         )["volume__avg"]
-        return round(results, 2)
+        return round(results or 0, 2)
 
     def get_average_position_volume_per_winning_trade(self, *args, **kwargs):
         results = self.queryset.filter(pnl__gt=0).aggregate(Avg("volume"))[
             "volume__avg"
         ]
-        return round(results, 2)
+        return round(results or 0, 2)
 
     def get_average_position_volume_per_losing_trade(self, *args, **kwargs):
         results = self.queryset.filter(pnl__lt=0).aggregate(Avg("volume"))[
             "volume__avg"
         ]
-        return round(results, 2)
+        return round(results or 0, 2)
 
     def get_average_position_volume_per_long_position(self, *args, **kwargs):
         results = self.queryset.filter(type="L").aggregate(
             Avg("volume")
         )["volume__avg"]
-        return round(results, 2)
+        return round(results or 0, 2)
 
     def get_average_position_volume_per_short_position(self, *args, **kwargs):
         results = self.queryset.filter(type="S").aggregate(
             Avg("volume")
         )["volume__avg"]
-        return round(results, 2)
+        return round(results or 0, 2)
 
     class Meta:
         fields = [
