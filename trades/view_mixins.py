@@ -1,5 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from trades.models import Trade
@@ -19,7 +20,7 @@ class TradeViewMixin:
         )
 
 
-class MetricsViewMixin:
+class MetricsViewMixin(GenericAPIView):
     model = Trade
     queryset = model.objects.all()
     permission_classes = [IsAuthenticated]
@@ -27,9 +28,10 @@ class MetricsViewMixin:
     filterset_class = TradeFilterSet
 
     def get_queryset(self):
-        return self.queryset.filter(
+        queryset = super().get_queryset().filter(
             user=self.request.user
         )
+        return self.filter_queryset(queryset)
 
     def get(self, request, *args, **kwargs):
         serializer = self.serializer_class(
