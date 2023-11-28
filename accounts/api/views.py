@@ -15,7 +15,7 @@ from rest_framework.permissions import (
 )
 
 from accounts.models import User
-from accounts.serializers import UserSerializer
+from accounts.api.serializers import UserSerializer
 
 
 class UserViewMixin:
