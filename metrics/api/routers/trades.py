@@ -1,6 +1,6 @@
 from django.urls import path
 
-from metrics.views.trades import (
+from metrics.api.views.trades import (
     MetricsSummaryView,
     ProfitAndLossView,
     TotalTradesView,

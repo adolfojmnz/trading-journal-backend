@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from trades.models import Trade
 from trades.filters import TradeFilterBackend, TradeFilterSet
 
-from metrics.serializers.trades import (
+from metrics.api.serializers.trades import (
     MetricsSummarySerializer,
     ProfitAndLossSerializer,
     TotalTradesSerializer,
