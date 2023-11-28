@@ -7,4 +7,5 @@ urlpatterns = [
     path("api/", include("tokens.routers")),
     path("api/", include("assets.routers")),
     path("api/", include("trades.routers")),
+    path("api/", include("metrics.routers.trades")),
 ]

@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "tokens.apps.TokensConfig",
     "assets.apps.AssetsConfig",
     "trades.apps.TradesConfig",
+    "metrics.apps.MetricsConfig",
 ]
 
 MIDDLEWARE = [
