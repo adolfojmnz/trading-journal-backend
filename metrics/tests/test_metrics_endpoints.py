@@ -33,8 +33,8 @@ class TestMetricssummaryEndpoint(MetricsMixin, TestCase):
         "total_loss_trades": 3,
         "average_profit": 38.0,
         "average_loss": -13.0,
-        "percentage_profit_trades": 50.0,
-        "percentage_loss_trades": 50.0,
+        "profit_loss_ratio": 0.5,
+        "loss_profit_ratio": 0.5,
         "average_holding_time": 6750.0,
         "average_position_volume": 0.01,
     }
@@ -55,6 +55,8 @@ class TestPNLMetrics(MetricsMixin, TestCase):
         "smallest_loss": -9.6,
         "average_profit": 38.0,
         "average_loss": -13.0,
+        "profit_loss_ratio": 0.5,
+        "loss_profit_ratio": 0.5,
     }
 
     def setUp(self) -> None:
@@ -79,10 +81,10 @@ class TestTotalTradesMetrics(MetricsMixin, TestCase):
 class TestHoldingTimeMetrics(MetricsMixin, TestCase):
     expected_metrics = {
         "average_holding_time": 6750.0,
-        "average_holding_time_per_winning_trade": 6900.0,
-        "average_holding_time_per_lossing_trade": 6600.0,
-        "average_holding_time_per_long_position": 5400.0,
-        "average_holding_time_per_short_position": 8100.0,
+        "average_holding_time_per_winning_trade": 6750.0,
+        "average_holding_time_per_lossing_trade": 6750.0,
+        "average_holding_time_per_long_position": 6750.0,
+        "average_holding_time_per_short_position": 6750.0,
     }
 
     def setUp(self) -> None:

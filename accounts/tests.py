@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from accounts.models import User
-from accounts.serializers import UserSerializer
+from accounts.api.serializers import UserSerializer
 
 from accounts.utils import create_test_user
 

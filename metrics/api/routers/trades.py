@@ -1,8 +1,6 @@
 from django.urls import path
 
-from trades.views import (
-    TradeListView,
-    TradeDetailView,
+from metrics.api.views.trades import (
     MetricsSummaryView,
     ProfitAndLossView,
     TotalTradesView,
@@ -12,16 +10,6 @@ from trades.views import (
 
 
 urlpatterns = [
-    path(
-        "trades",
-        TradeListView.as_view(),
-        name="trade-list",
-    ),
-    path(
-        "trades/<int:pk>",
-        TradeDetailView.as_view(),
-        name="trade-detail",
-    ),
     path(
         "trades/metrics",
         MetricsSummaryView.as_view(),

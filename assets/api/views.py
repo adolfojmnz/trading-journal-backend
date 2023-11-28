@@ -9,7 +9,7 @@ from rest_framework.permissions import (
 )
 
 from assets.models import Currency, CurrencyPair
-from assets.serializers import (
+from assets.api.serializers import (
     CurrencySerializer,
     CurrencyPairSerializer,
 )
