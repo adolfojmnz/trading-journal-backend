@@ -1,27 +1,32 @@
 from django.urls import path
 
-from assets import views
+from assets.api.views import (
+    CurrencyListView,
+    CurrencyDetailView,
+    CurrencyPairListView,
+    CurrencyPairDetailView,
+)
 
 
 urlpatterns = [
     path(
         "currencies",
-        views.CurrencyListView.as_view(),
+        CurrencyListView.as_view(),
         name="currency-list",
     ),
     path(
         "currencies/<int:pk>",
-        views.CurrencyDetailView.as_view(),
+        CurrencyDetailView.as_view(),
         name="currency-detail",
     ),
     path(
         "assets/",
-        views.CurrencyPairListView.as_view(),
+        CurrencyPairListView.as_view(),
         name="pair-list",
     ),
     path(
         "assets/<int:pk>",
-        views.CurrencyPairDetailView.as_view(),
+        CurrencyPairDetailView.as_view(),
         name="pair-detail",
     ),
 ]

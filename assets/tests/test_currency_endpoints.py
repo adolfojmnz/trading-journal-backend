@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from assets.models import Currency
-from assets.serializers import CurrencySerializer
+from assets.api.serializers import CurrencySerializer
 
 from accounts.utils import create_test_admin, create_test_user
 from assets.helpers.test_utils import (
