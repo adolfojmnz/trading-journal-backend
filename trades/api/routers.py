@@ -1,6 +1,6 @@
 from django.urls import path
 
-from trades.views import TradeListView, TradeDetailView
+from trades.api.views import TradeListView, TradeDetailView
 
 
 urlpatterns = [

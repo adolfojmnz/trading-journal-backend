@@ -5,8 +5,8 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 
 from trades.models import Trade
-from trades.serializers import TradeSerializer
-from trades.filters import TradeFilterBackend, TradeFilterSet
+from trades.api.serializers import TradeSerializer
+from trades.api.filters import TradeFilterBackend, TradeFilterSet
 
 
 class TradeViewMixin:

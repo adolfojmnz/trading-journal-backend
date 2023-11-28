@@ -4,7 +4,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from trades.models import Trade
-from trades.filters import TradeFilterBackend, TradeFilterSet
+from trades.api.filters import TradeFilterBackend, TradeFilterSet
 
 from metrics.api.serializers.trades import (
     MetricsSummarySerializer,

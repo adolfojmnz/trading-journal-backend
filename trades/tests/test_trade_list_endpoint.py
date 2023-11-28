@@ -8,7 +8,7 @@ from rest_framework.test import APIClient
 from accounts.utils import create_test_user
 
 from trades.models import Trade
-from trades.serializers import TradeSerializer
+from trades.api.serializers import TradeSerializer
 from trades.helpers.test_utils import create_forex_trade_list
 
 from assets.helpers.test_utils import create_eurgbp_pair

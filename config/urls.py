@@ -6,6 +6,6 @@ urlpatterns = [
     path("api/", include("accounts.routers")),
     path("api/", include("tokens.routers")),
     path("api/", include("assets.routers")),
-    path("api/", include("trades.routers")),
+    path("api/", include("trades.api.routers")),
     path("api/", include("metrics.api.routers.trades")),
 ]
