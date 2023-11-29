@@ -13,6 +13,10 @@ from assets.api.serializers import (
     CurrencySerializer,
     CurrencyPairSerializer,
 )
+from assets.api.filters import (
+    CurrencyPairFilterBackend,
+    CurrencyPairFilterSet,
+)
 
 
 class PermissionsMixin:
@@ -40,6 +44,8 @@ class CurrencyPairListView(PermissionsMixin, ListCreateAPIView):
     model = CurrencyPair
     queryset = model.objects.all()
     serializer_class = CurrencyPairSerializer
+    filter_backends = [CurrencyPairFilterBackend]
+    filterset_class = CurrencyPairFilterSet
 
 
 class CurrencyPairDetailView(PermissionsMixin, RetrieveUpdateDestroyAPIView):

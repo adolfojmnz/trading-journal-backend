@@ -1,7 +1,5 @@
 from django.db import models
 
-from accounts.models import User
-
 
 class Currency(models.Model):
     symbol = models.CharField(
