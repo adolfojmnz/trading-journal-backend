@@ -1,26 +1,28 @@
-import time, random
+import time
+import random
 
 from django.utils import timezone
 
-from accounts.utils import create_test_user
+from tests.utils.accounts import get_or_create_test_user
 
 from trades.models import Trade
 
-from assets.helpers.test_utils import (
-    create_eur,
-    create_gbp,
-    create_jpy,
-    create_eurgbp_pair,
-    create_eurjpy_pair,
-    create_gbpjpy_pair,
+from tests.utils.assets import (
+    get_or_create_eur_currency,
+    get_or_create_gbp_currency,
+    get_or_create_jpy_currency,
+    get_or_create_eurgbp_pair,
+    get_or_create_eurjpy_pair,
+    get_or_create_gbpjpy_pair,
 )
 
 
 def generate_ticket_number():
-    """Generates a big integer ID based on the current time and a sequence number."""
+    """ Generates a big integer ID based on the current
+        time and a sequence number. """
     current_time = time.time()
     sequence_number = random.randint(0, 1000)
-    return int(current_time * 1000) + sequence_number
+    return int(current_time) + sequence_number
 
 
 def create_forex_trade(
@@ -41,9 +43,11 @@ def create_forex_trade(
         user=user,
         ticket=ticket or generate_ticket_number(),
         type=type or "L",
-        currency_pair=pair or create_eurgbp_pair(),
+        currency_pair=pair or get_or_create_eurgbp_pair(),
         open_datetime=open_datetime or timezone.now(),
-        close_datetime=close_datetime or timezone.now() + timezone.timedelta(hours=3),
+        close_datetime=(
+            close_datetime or timezone.now() + timezone.timedelta(hours=3)
+        ),
         open_price=open_price or 0.85251,
         close_price=close_price or 0.85851,
         stop_loss=stop_loss or 0.85150,
@@ -55,17 +59,17 @@ def create_forex_trade(
 
 def create_forex_trade_list(user=None):
     # user that perform the trades
-    user = user if user else create_test_user()
+    user = user if user else get_or_create_test_user()
 
     # create currencies
-    eur = create_eur()
-    gbp = create_gbp()
-    jpy = create_jpy()
+    eur = get_or_create_eur_currency()
+    gbp = get_or_create_gbp_currency()
+    jpy = get_or_create_jpy_currency()
 
     # create currency pairs
-    eurgbp = create_eurgbp_pair(eur, gbp)
-    eurjpy = create_eurjpy_pair(eur, jpy)
-    gbpjpy = create_gbpjpy_pair(gbp, jpy)
+    eurgbp = get_or_create_eurgbp_pair(eur, gbp)
+    eurjpy = get_or_create_eurjpy_pair(eur, jpy)
+    gbpjpy = get_or_create_gbpjpy_pair(gbp, jpy)
 
     # Create Forex trades for the above currency pairs
     create_forex_trade(user, pair=eurgbp)  # won trade

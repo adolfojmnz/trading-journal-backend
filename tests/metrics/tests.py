@@ -4,15 +4,15 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from accounts.utils import create_test_user
+from tests.utils.accounts import get_or_create_test_user
 
-from trades.helpers.test_utils import create_forex_trade_list
+from tests.utils.trades import create_forex_trade_list
 
 
 class MetricsMixin:
     def setUp(self) -> None:
         self.client = APIClient()
-        self.user = create_test_user()
+        self.user = get_or_create_test_user()
         self.client.force_authenticate(user=self.user)
         return super().setUp()
 

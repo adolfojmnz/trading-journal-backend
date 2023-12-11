@@ -6,9 +6,12 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from accounts.utils import create_test_user, create_test_admin
+from tests.utils.accounts import (
+    get_or_create_test_user,
+    get_or_create_test_admin,
+)
 
-from trades.helpers.test_utils import create_forex_trade
+from tests.utils.trades import create_forex_trade
 
 
 class TestTradeQuerySet(TestCase):
@@ -16,8 +19,8 @@ class TestTradeQuerySet(TestCase):
 
     def setUp(self) -> None:
         self.client = APIClient()
-        user = create_test_user()
-        admin = create_test_admin()
+        user = get_or_create_test_user()
+        admin = get_or_create_test_admin()
         self.client.force_authenticate(user=admin)
         self.operation = create_forex_trade(user)
         self.url = reverse("trade-detail", kwargs={"pk": self.operation.pk})
