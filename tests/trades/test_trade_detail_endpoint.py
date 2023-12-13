@@ -6,17 +6,17 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from accounts.utils import create_test_user
-
 from trades.models import Trade
 from trades.api.serializers import TradeSerializer
-from trades.helpers.test_utils import create_forex_trade
+
+from tests.utils.accounts import get_or_create_test_user
+from tests.utils.trades import create_forex_trade
 
 
 class TestTradeDetail(TestCase):
     def setUp(self) -> None:
         self.client = APIClient()
-        self.user = create_test_user()
+        self.user = get_or_create_test_user()
         self.client.force_authenticate(user=self.user)
         self.trade = create_forex_trade(self.user)
         self.url = reverse("trade-detail", kwargs={"pk": self.trade.pk})

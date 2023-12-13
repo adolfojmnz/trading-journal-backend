@@ -9,18 +9,23 @@ from rest_framework.test import APIClient
 from assets.models import Currency
 from assets.api.serializers import CurrencySerializer
 
-from accounts.utils import create_test_admin, create_test_user
-from assets.helpers.test_utils import (
-    EUR_DATA,
-    create_eur,
+from tests.utils.accounts import (
+    get_or_create_test_admin,
+    get_or_create_test_user,
+)
+
+from tests.utils.assets import (
+    get_or_create_eur_currency,
     create_currency_pair_list,
 )
+
+EUR_DATA = {"symbol": "EUR", "name": "Euro", "description": "..."}
 
 
 class SetUpTestCase(TestCase):
     def setUp(self) -> None:
         self.client = APIClient()
-        self.admin = create_test_admin()
+        self.admin = get_or_create_test_admin()
         self.client.force_authenticate(user=self.admin)
         self.url = reverse("currency-list")
 
@@ -49,7 +54,7 @@ class TestCurrencyListPermissions(SetUpTestCase):
 
     def setUp(self) -> None:
         self.client = APIClient()
-        simple_user = create_test_user()
+        simple_user = get_or_create_test_user()
         self.client.force_authenticate(user=simple_user)
         self.url = reverse("currency-list")
 
@@ -71,10 +76,10 @@ class TestCurrencyDetail(TestCase):
     """Tets the currency-detail endpoint with admin authentication"""
 
     def setUp(self) -> None:
-        admin = create_test_admin()
+        admin = get_or_create_test_admin()
         self.client = APIClient()
         self.client.force_authenticate(user=admin)
-        self.currency = create_eur()
+        self.currency = get_or_create_eur_currency()
         self.url = reverse("currency-detail", kwargs={"pk": self.currency.pk})
 
     def test_retrieve_currency(self):
@@ -108,10 +113,10 @@ class TestCurrencyDetailPermissions(TestCase):
     """Test the permissions that a non-admin user has over the endpoint"""
 
     def setUp(self) -> None:
-        simple_user = create_test_user()
+        simple_user = get_or_create_test_user()
         self.client = APIClient()
         self.client.force_authenticate(user=simple_user)
-        self.currency = create_eur()
+        self.currency = get_or_create_eur_currency()
         self.url = reverse("currency-detail", kwargs={"pk": self.currency.pk})
 
     def test_retrieve_currency(self):

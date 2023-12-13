@@ -5,13 +5,13 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from rest_framework.response import Response
 
-from accounts.utils import create_test_user
+from tests.utils.accounts import get_or_create_test_user
 
 
 class TestSimpleJWTEndpoint(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = create_test_user()
+        self.user = get_or_create_test_user()
         return super().setUp()
 
     def get_token_pair(self) -> Response:

@@ -9,28 +9,37 @@ from rest_framework.test import APIClient
 from assets.models import CurrencyPair
 from assets.api.serializers import CurrencyPairSerializer
 
-from accounts.utils import create_test_admin, create_test_user
-from assets.helpers.test_utils import (
-    create_eur,
-    create_gbp,
-    create_eurgbp_pair,
+from tests.utils.accounts import (
+    get_or_create_test_admin,
+    get_or_create_test_user,
+)
+
+from tests.utils.assets import (
+    get_or_create_eur_currency,
+    get_or_create_gbp_currency,
+    get_or_create_eurgbp_pair,
     create_currency_pair_list,
 )
 
 
 class SetUpMixin(TestCase):
     def authenticate_admin_client(self):
-        admin = create_test_admin()
+        admin = get_or_create_test_admin()
         self.client = APIClient()
         self.client.force_authenticate(user=admin)
 
     def authenticate_simple_user_client(self):
-        simple_user = create_test_user()
+        simple_user = get_or_create_test_user()
         self.client = APIClient()
         self.client.force_authenticate(user=simple_user)
 
+    def get_serialized_object(self):
+        return CurrencyPairSerializer(
+            CurrencyPair.objects.get(pk=self.currency_pair.pk)
+        )
 
-class TestCurrencyPairList(SetUpMixin):
+
+class TestCurrencyListEndpoint(SetUpMixin):
     """Tests with admin authentication"""
 
     def setUp(self) -> None:
@@ -40,8 +49,8 @@ class TestCurrencyPairList(SetUpMixin):
     def test_create_currency_pair(self):
         data = {
             "name": "EUR/GBP Forex Pair",
-            "base_currency": create_eur().pk,
-            "quote_currency": create_gbp().pk,
+            "base_currency": get_or_create_eur_currency().pk,
+            "quote_currency": get_or_create_gbp_currency().pk,
         }
         response = self.client.post(self.url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -71,8 +80,8 @@ class TestCurrencyPairListForNonAdmin(SetUpMixin):
         """Non-admin users cannot create currency pairs."""
         data = {
             "name": "EUR/GBP Forex Pair",
-            "base_currency": create_eur().pk,
-            "quote_currency": create_gbp().pk,
+            "base_currency": get_or_create_eur_currency().pk,
+            "quote_currency": get_or_create_gbp_currency().pk,
         }
         response = self.client.post(self.url, data=data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -88,36 +97,16 @@ class TestCurrencyPairListForNonAdmin(SetUpMixin):
         self.assertEqual(response.data, serializer.data)
 
 
-class SetUpMixin(TestCase):
-    def setUp(self) -> None:
-        self.currency_pair = create_eurgbp_pair()
-        self.url = reverse(
-            "pair-detail",
-            kwargs={"pk": self.currency_pair.pk},
-        )
-
-    def authenticate_admin_client(self):
-        admin = create_test_admin()
-        self.client = APIClient()
-        self.client.force_authenticate(user=admin)
-
-    def authenticate_simple_user_client(self):
-        simple_user = create_test_user()
-        self.client = APIClient()
-        self.client.force_authenticate(user=simple_user)
-
-    def get_serialized_object(self):
-        return CurrencyPairSerializer(
-            CurrencyPair.objects.get(pk=self.currency_pair.pk)
-        )
-
-
 class TestCurrencyPairDetail(SetUpMixin):
     """Tests the endpoint with admin authentication"""
 
     def setUp(self) -> None:
         self.authenticate_admin_client()
-        return super().setUp()
+        self.currency_pair = get_or_create_eurgbp_pair()
+        self.url = reverse(
+            "pair-detail",
+            kwargs={"pk": self.currency_pair.pk},
+        )
 
     def test_retrieve_currency_pair(self):
         response = self.client.get(self.url)
@@ -146,6 +135,11 @@ class TestCurrencyPairDetailForNonAdmin(SetUpMixin):
 
     def setUp(self) -> None:
         self.authenticate_simple_user_client()
+        self.currency_pair = get_or_create_eurgbp_pair()
+        self.url = reverse(
+            "pair-detail",
+            kwargs={"pk": self.currency_pair.pk},
+        )
         return super().setUp()
 
     def test_retrieve_currency_pair(self):

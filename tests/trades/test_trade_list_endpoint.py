@@ -5,19 +5,20 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from accounts.utils import create_test_user
-
 from trades.models import Trade
 from trades.api.serializers import TradeSerializer
-from trades.helpers.test_utils import create_forex_trade_list
 
-from assets.helpers.test_utils import create_eurgbp_pair
+from tests.utils.accounts import get_or_create_test_user
+from tests.utils.trades import (
+    get_or_create_eurgbp_pair,
+    create_forex_trade_list,
+)
 
 
 class TestTradeListEndpoint(TestCase):
     def setUp(self) -> None:
         self.client = APIClient()
-        self.user = create_test_user()
+        self.user = get_or_create_test_user()
         self.client.force_authenticate(user=self.user)
         self.url = reverse("trade-list")
         return super().setUp()
@@ -27,9 +28,9 @@ class TestTradeListEndpoint(TestCase):
             self.url,
             data={
                 "user": self.user.pk,
-                "ticket": 75824518823,
+                "ticket": 1824518823,
                 "type": "L",
-                "currency_pair": create_eurgbp_pair().pk,
+                "currency_pair": get_or_create_eurgbp_pair().pk,
                 "open_datetime": timezone.now(),
                 "close_datetime": timezone.now() + timezone.timedelta(hours=3),
                 "open_price": 1.25467,

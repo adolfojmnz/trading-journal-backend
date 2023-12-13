@@ -9,7 +9,7 @@ from rest_framework.test import APIClient
 from accounts.models import User
 from accounts.api.serializers import UserSerializer
 
-from accounts.utils import create_test_user
+from tests.utils.accounts import get_or_create_test_user
 
 
 class TestUserListEndpoint(TestCase):
@@ -19,7 +19,7 @@ class TestUserListEndpoint(TestCase):
         return super().setUp()
 
     def authenticate_client(self):
-        self.client.force_authenticate(user=create_test_user())
+        self.client.force_authenticate(user=get_or_create_test_user())
 
     def test_create_user(self):
         response = self.client.post(
@@ -40,7 +40,7 @@ class TestUserListEndpoint(TestCase):
 
 class TestUserDetailEndpoint(TestCase):
     def setUp(self):
-        self.user = create_test_user()
+        self.user = get_or_create_test_user()
         self.url = reverse(
             "user-detail",
             kwargs={"pk": self.user.pk},
