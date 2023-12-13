@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "assets.apps.AssetsConfig",
     "trades.apps.TradesConfig",
     "metrics.apps.MetricsConfig",
+    "countries.apps.CountriesConfig",
 ]
 
 MIDDLEWARE = [

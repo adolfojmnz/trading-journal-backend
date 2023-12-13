@@ -9,4 +9,5 @@ urlpatterns = [
     path("api/", include("trades.api.routers")),
     path("api/", include("metrics.api.routers.trades")),
     path("api/", include("metrics.api.routers.assets")),
+    path("api/", include("countries.api.routers")),
 ]
