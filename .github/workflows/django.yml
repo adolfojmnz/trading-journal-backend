@@ -15,6 +15,21 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11"]
 
+    services:
+      postgres:
+        image: postgres:15.3
+        env:
+          POSTGRES_USER: ${{ secrets.DATABASE_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DATABASE_NAME }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -29,6 +44,7 @@ jobs:
       run: |
         echo "DEBUG=${{ secrets.DEBUG }}" >> .env
         echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+        echo "REACT_SERVER"=${{ secrets.REACT_SERVER }} >> .env
         echo "DJANGO_ALLOWED_HOSTS"=${{ secrets.DJANGO_ALLOWED_HOSTS }} >> .env
     - name: Apply Migrations
       run: |
