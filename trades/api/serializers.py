@@ -13,6 +13,7 @@ class TradeSerializer(ModelSerializer):
         model = Trade
         fields = [
             "id",
+            "user",
             "ticket",
             "type",
             "currency_pair",
