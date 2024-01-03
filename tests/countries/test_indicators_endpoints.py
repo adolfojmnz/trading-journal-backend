@@ -12,7 +12,7 @@ from countries.api.serializers import (
     EconomicIndicatorSerializer,
 )
 
-from tests.utils.accounts import get_or_create_test_user
+from tests.utils.accounts import get_or_create_test_admin
 
 from tests.utils.countries import get_or_create_ch_country
 
@@ -25,7 +25,7 @@ from tests.utils.indicators import (
 class TestEconomicIndicatorList(TestCase):
     def setUp(self):
         self.client = APIClient()
-        user = get_or_create_test_user()
+        user = get_or_create_test_admin()
         self.client.force_authenticate(user)
         self.url = reverse("economic-indicator-list")
 
@@ -59,8 +59,8 @@ class TestEconomicIndicatorList(TestCase):
 
 class TestEconomicIndicatorDetail(TestCase):
     def setUp(self):
-        user = get_or_create_test_user()
         self.client = APIClient()
+        user = get_or_create_test_admin()
         self.client.force_authenticate(user)
         self.indicator = get_or_create_us_economic_indicator()
         self.url = reverse(

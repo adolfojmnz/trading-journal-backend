@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 from countries.models import EconomicReport
 from countries.api.serializers import EconomicReportSerializer
 
-from tests.utils.accounts import get_or_create_test_user
+from tests.utils.accounts import get_or_create_test_admin
 
 from tests.utils.reports import (
     get_or_create_us_economic_report,
@@ -20,7 +20,7 @@ from tests.utils.indicators import get_or_create_us_economic_indicator
 class TestEconomicReportList(TestCase):
     def setUp(self):
         self.client = APIClient()
-        user = get_or_create_test_user()
+        user = get_or_create_test_admin()
         self.client.force_authenticate(user)
         self.url = reverse("economic-report-list")
 
@@ -62,7 +62,7 @@ class TestEconomicReportList(TestCase):
 class TestEconomicReportDetail(TestCase):
     def setUp(self):
         self.client = APIClient()
-        user = get_or_create_test_user()
+        user = get_or_create_test_admin()
         self.client.force_authenticate(user)
         self.report = get_or_create_us_economic_report()
         self.url = reverse(

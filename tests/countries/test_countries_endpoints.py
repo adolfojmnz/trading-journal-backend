@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 from countries.models import Country
 from countries.api.serializers import CountrySerializer
 
-from tests.utils.accounts import get_or_create_test_user
+from tests.utils.accounts import get_or_create_test_admin
 
 from tests.utils.assets import get_or_create_eur_currency
 
@@ -19,7 +19,7 @@ from tests.utils.countries import (
 
 class TestCountryList(TestCase):
     def setUp(self):
-        user = get_or_create_test_user()
+        user = get_or_create_test_admin()
         self.client = APIClient()
         self.client.force_authenticate(user)
         self.url = reverse("country-list")
@@ -53,7 +53,7 @@ class TestCountryList(TestCase):
 class TestCountryDetail(TestCase):
     def setUp(self):
         self.db_country = get_or_create_ge_country()
-        user = get_or_create_test_user()
+        user = get_or_create_test_admin()
         self.client = APIClient()
         self.client.force_authenticate(user)
         self.url = reverse(

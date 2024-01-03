@@ -1,4 +1,8 @@
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAdminUser,
+    SAFE_METHODS,
+)
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateAPIView,
@@ -16,42 +20,50 @@ from countries.api.serializers import (
 )
 
 
-class CountryListView(ListCreateAPIView):
+class PermisionsMixin:
+    def get_permissions(self):
+        self.permission_classes = [IsAuthenticated]
+        if self.request.method not in SAFE_METHODS:
+            self.permission_classes = [IsAdminUser]
+        return super().get_permissions()
+
+
+class CountryListView(PermisionsMixin, ListCreateAPIView):
     model = Country
     queryset = model.objects.all()
     serializer_class = CountrySerializer
     permission_classes = [IsAuthenticated]
 
 
-class CountryDetailView(RetrieveUpdateAPIView):
+class CountryDetailView(PermisionsMixin, RetrieveUpdateAPIView):
     model = Country
     queryset = model.objects.all()
     serializer_class = CountrySerializer
     permission_classes = [IsAuthenticated]
 
 
-class EconomicIndicatorListView(ListCreateAPIView):
+class EconomicIndicatorListView(PermisionsMixin, ListCreateAPIView):
     model = EconomicIndicator
     queryset = model.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = EconomicIndicatorSerializer
 
 
-class EconomicIndicatorDetailView(RetrieveUpdateAPIView):
+class EconomicIndicatorDetailView(PermisionsMixin, RetrieveUpdateAPIView):
     model = EconomicIndicator
     queryset = model.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = EconomicIndicatorSerializer
 
 
-class EconomicReportListView(ListCreateAPIView):
+class EconomicReportListView(PermisionsMixin, ListCreateAPIView):
     model = EconomicReport
     queryset = model.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = EconomicReportSerializer
 
 
-class EconomicReportDetailView(RetrieveUpdateAPIView):
+class EconomicReportDetailView(PermisionsMixin, RetrieveUpdateAPIView):
     model = EconomicReport
     queryset = model.objects.all()
     permission_classes = [IsAuthenticated]
