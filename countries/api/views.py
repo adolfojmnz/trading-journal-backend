@@ -18,6 +18,12 @@ from countries.api.serializers import (
     EconomicReportSerializer,
     EconomicIndicatorSerializer,
 )
+from countries.api.filters import (
+    FilterBackend,
+    ReportFilterSet,
+    CountryFilterSet,
+    IndicatorFilterSet,
+)
 
 
 class PermisionsMixin:
@@ -33,6 +39,8 @@ class CountryListView(PermisionsMixin, ListCreateAPIView):
     queryset = model.objects.all()
     serializer_class = CountrySerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = [FilterBackend]
+    filterset_class = CountryFilterSet
 
 
 class CountryDetailView(PermisionsMixin, RetrieveUpdateAPIView):
@@ -47,6 +55,8 @@ class EconomicIndicatorListView(PermisionsMixin, ListCreateAPIView):
     queryset = model.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = EconomicIndicatorSerializer
+    filter_backends = [FilterBackend]
+    filterset_class = IndicatorFilterSet
 
 
 class EconomicIndicatorDetailView(PermisionsMixin, RetrieveUpdateAPIView):
@@ -61,6 +71,8 @@ class EconomicReportListView(PermisionsMixin, ListCreateAPIView):
     queryset = model.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = EconomicReportSerializer
+    filter_backends = [FilterBackend]
+    filterset_class = ReportFilterSet
 
 
 class EconomicReportDetailView(PermisionsMixin, RetrieveUpdateAPIView):
