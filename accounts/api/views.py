@@ -57,7 +57,7 @@ class UserViewMixin:
                 {"Validation Error": f"{error}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        except TypeError as error:
+        except TypeError:
             if request.method in ["PATCH"]:
                 return handler_func(request, *args, **kwargs)
             return Response(
